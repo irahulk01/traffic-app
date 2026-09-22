@@ -1,0 +1,26 @@
+{
+  "name": "GatiLive • Police Traffic Command & Control",
+  "short_name": "GatiLive",
+  "description": "Live real-time 50km street traffic radar & police monitoring dashboard for Indian cities.",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "background_color": "#090d16",
+  "theme_color": "#090d16",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["navigation", "utilities", "government"]
+}
