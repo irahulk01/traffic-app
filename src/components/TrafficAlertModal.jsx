@@ -2,50 +2,78 @@ import React, { useState, useEffect } from 'react';
 import {
   Bell,
   X,
-  AlertTriangle,
-  MapPin,
-  Clock,
-  Shield,
-  Radio,
   CheckCircle2,
-  Send,
-  Navigation,
-  Sparkles,
+  Activity,
+  Sliders,
 } from 'lucide-react';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  closeNotificationDrawer,
+  setPermission,
+  addDispatchedAlert,
+  triggerSuddenAlert,
+} from '../store/notificationsSlice';
 import {
   getNotificationPermission,
   requestNotificationPermission,
   sendMobileTrafficPush,
 } from '../services/notificationService';
+import {
+  generateSuddenTrafficAlert,
+  playAlertChime,
+} from '../services/trafficAlertEngine';
+import NotificationAlertItem from './notifications/NotificationAlertItem';
+import NotificationPushSettings from './notifications/NotificationPushSettings';
 
 export default function TrafficAlertModal({
-  isOpen,
-  onClose,
-  cityName = 'Selected Division',
-  heavyStreets = [],
+  isOpen: propIsOpen,
+  onClose: propOnClose,
+  cityName: propCityName,
+  heavyStreets: propHeavyStreets,
   onSelectStreet,
 }) {
-  const [permission, setPermission] = useState('default');
+  const dispatch = useDispatch();
+  const reduxIsOpen = useSelector((state) => state.notifications.isOpen);
+  const reduxPermission = useSelector((state) => state.notifications.permission);
+  const reduxActiveAlerts = useSelector((state) => state.notifications.activeAlerts);
+  const reduxIpLocation = useSelector((state) => state.notifications.ipLocation);
+
+  const isOpen = propIsOpen !== undefined ? propIsOpen : reduxIsOpen;
+  const heavyStreets = propHeavyStreets !== undefined ? propHeavyStreets : reduxActiveAlerts;
+  const cityName = propCityName || reduxIpLocation?.city || 'Your Area';
+
   const [testSent, setTestSent] = useState(false);
+  const [activeTab, setActiveTab] = useState('alerts'); // 'alerts' | 'settings'
 
   useEffect(() => {
     if (isOpen) {
-      setPermission(getNotificationPermission());
+      const currentPerm = getNotificationPermission();
+      dispatch(setPermission(currentPerm));
       setTestSent(false);
+      setActiveTab('alerts');
     }
-  }, [isOpen]);
+  }, [isOpen, dispatch]);
 
   if (!isOpen) return null;
 
+  const handleClose = () => {
+    if (propOnClose) {
+      propOnClose();
+    }
+    dispatch(closeNotificationDrawer());
+  };
+
   const handleEnablePush = async () => {
     const res = await requestNotificationPermission();
-    setPermission(res);
+    dispatch(setPermission(res));
     if (res === 'granted') {
-      sendMobileTrafficPush({
-        title: '🚨 GatiLive: 50km Traffic Radar Active',
-        body: `You will receive instant mobile alerts for heavy choke points within 50km of ${cityName} Division.`,
-        tag: 'gatilive-welcome',
-      });
+      const payload = {
+        title: '🚨 Traffic Monitoring Active',
+        body: `Instant notifications enabled for real-time heavy traffic in ${cityName}.`,
+        tag: 'traffic-monitoring-welcome',
+      };
+      sendMobileTrafficPush(payload);
+      dispatch(addDispatchedAlert(payload));
       setTestSent(true);
       setTimeout(() => setTestSent(false), 4000);
     }
@@ -54,19 +82,21 @@ export default function TrafficAlertModal({
   const handleSendTestPush = async () => {
     const firstHeavy = heavyStreets[0];
     const title = firstHeavy
-      ? `🚨 Traffic Alert: ${firstHeavy.name} (${firstHeavy.distanceKm ? `${firstHeavy.distanceKm} km away` : 'Within 50km'})`
-      : `🟢 50km All Clear: ${cityName} Division`;
+      ? `🚨 Choke Point Alert: ${firstHeavy.name}`
+      : `🟢 All Clear in ${cityName}`;
     const body = firstHeavy
-      ? `${firstHeavy.delay} • Crawl speed: ${firstHeavy.speed} km/h • ${firstHeavy.policeAdvisory}`
-      : `All arterial corridors within 50km radius are flowing normally. Test alert received successfully.`;
+      ? `${firstHeavy.delay} • Speed: ${firstHeavy.speed} km/h • ${firstHeavy.trafficAdvisory || firstHeavy.advisory}`
+      : `Arterial corridors are flowing normally without delay.`;
 
-    const success = await sendMobileTrafficPush({
+    const payload = {
       title,
       body,
       tag: 'test-heavy-alert',
-    });
+    };
 
+    const success = await sendMobileTrafficPush(payload);
     if (success) {
+      dispatch(addDispatchedAlert(payload));
       setTestSent(true);
       setTimeout(() => setTestSent(false), 4000);
     }
@@ -76,163 +106,138 @@ export default function TrafficAlertModal({
     if (onSelectStreet) {
       onSelectStreet(street);
     }
-    onClose();
+    handleClose();
   };
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
+    <div className="notification-panel-backdrop" onClick={handleClose}>
       <div
-        className="modal-content-sheet radar-alert-sheet"
+        className="notification-panel-drawer"
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Traffic Notifications & Alerts"
       >
-        {/* Header */}
-        <div className="modal-title-row">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div className="radar-bell-box">
-              <Shield size={18} color="#ef4444" />
-              <div className="radar-ping-indicator" />
+        {/* Top Header */}
+        <div className="notif-panel-header">
+          <div className="notif-header-left">
+            <div className="notif-bell-avatar">
+              <Bell size={18} />
+              {heavyStreets.length > 0 && <span className="notif-pulse-dot" />}
             </div>
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>
-                  50 km Radar & Choke Point Alerts
-                </h3>
-                <span className="radius-tag-badge">50 KM RADAR</span>
+              <div className="notif-title-row">
+                <h3 className="notif-main-title">Notifications & Alerts</h3>
+                {heavyStreets.length > 0 ? (
+                  <span className="notif-count-chip">{heavyStreets.length} Active</span>
+                ) : (
+                  <span className="notif-count-chip clear">0 Active</span>
+                )}
               </div>
-              <p style={{ margin: 0, fontSize: 12, color: '#94a3b8' }}>
-                Active heavy bottlenecks within 50 km of {cityName} Division
+              <p className="notif-subtext">
+                Live heavy disruptions in {cityName} • Retained for 24h
               </p>
             </div>
           </div>
-          <button className="clear-search-btn" onClick={onClose} title="Close Alerts">
-            <X size={16} />
+          <button
+            type="button"
+            className="notif-close-btn"
+            onClick={handleClose}
+            title="Close notifications"
+            aria-label="Close notifications"
+          >
+            <X size={17} />
           </button>
         </div>
 
-        {/* Police Mobile Notification Controls */}
-        <div className="pwa-push-card">
-          <div className="pwa-push-left">
-            <Radio size={16} color={permission === 'granted' ? '#22c55e' : '#38bdf8'} />
-            <div>
-              <div className="pwa-push-title">
-                Mobile Notification Push Alerts
-                {permission === 'granted' ? (
-                  <span className="pwa-badge active">PUSH ACTIVE</span>
-                ) : (
-                  <span className="pwa-badge inactive">TAP TO ENABLE</span>
-                )}
-              </div>
-              <div className="pwa-push-desc">
-                {permission === 'granted'
-                  ? 'Active: Critical choke points within 50 km will dispatch notifications straight to your phone tray.'
-                  : 'Enable mobile notifications to receive immediate alerts on your device for road slowdowns.'}
-              </div>
-            </div>
-          </div>
-
-          <div className="pwa-push-actions">
-            {permission !== 'granted' ? (
-              <button className="pwa-enable-btn" onClick={handleEnablePush}>
-                <Bell size={13} />
-                <span>Enable Mobile Alerts</span>
-              </button>
-            ) : (
-              <button
-                className="pwa-test-btn"
-                onClick={handleSendTestPush}
-                title="Send a sample notification to your device notification tray"
-              >
-                <Send size={13} />
-                <span>{testSent ? 'Alert Dispatched!' : 'Send Test Notification'}</span>
-              </button>
-            )}
-          </div>
+        {/* Tab Switcher */}
+        <div className="notif-tab-bar">
+          <button
+            type="button"
+            className={`notif-tab-item ${activeTab === 'alerts' ? 'active' : ''}`}
+            onClick={() => setActiveTab('alerts')}
+          >
+            <Activity size={14} />
+            <span>Active Alerts ({heavyStreets.length})</span>
+          </button>
+          <button
+            type="button"
+            className={`notif-tab-item ${activeTab === 'settings' ? 'active' : ''}`}
+            onClick={() => setActiveTab('settings')}
+          >
+            <Sliders size={14} />
+            <span>Push Notification Settings</span>
+          </button>
         </div>
 
-        {/* Heavy Traffic List under 50km */}
-        <div className="radar-alerts-list">
-          {heavyStreets.length > 0 ? (
-            heavyStreets.map((street) => (
-              <div key={street.id || street.name} className="radar-alert-card">
-                <div className="radar-card-top">
-                  <div className="radar-badge-group">
-                    <span className="heavy-danger-badge">
-                      <AlertTriangle size={11} />
-                      CRITICAL CHOKE POINT
-                    </span>
-                    <span className="corridor-dist-badge">
-                      <MapPin size={10} />
-                      {street.distanceKm ? `${street.distanceKm} km from Hub` : '< 50 km'}
-                    </span>
-                  </div>
-                  <span className="radar-delay-tag">{street.delay}</span>
+        {/* Tab Content: Alerts Feed */}
+        {activeTab === 'alerts' && (
+          <div className="notif-feed-container">
+            {/* Quick Push Banner if not granted */}
+            {reduxPermission !== 'granted' && (
+              <div className="notif-banner-strip">
+                <div className="notif-banner-info">
+                  <Bell size={14} className="banner-bell-icon" />
+                  <span>Get alerted on heavy choke points & gridlocks</span>
                 </div>
-
-                <div className="radar-road-name">{street.name}</div>
-
-                {street.landmark && (
-                  <div className="radar-landmark-text">
-                    <MapPin size={11} color="#38bdf8" />
-                    <span>Chowk / Landmark: {street.landmark}</span>
-                  </div>
-                )}
-
-                <div className="radar-metrics-row">
-                  <div className="metric-chip">
-                    <span className="label">Crawl Speed</span>
-                    <span className="val danger">{street.speed} km/h</span>
-                  </div>
-                  <div className="metric-chip">
-                    <span className="label">Speed Limit</span>
-                    <span className="val">{street.speedLimit} km/h</span>
-                  </div>
-                  <div className="metric-chip">
-                    <span className="label">ETA Impact</span>
-                    <span className="val warning">+{street.delayMinutes} min delay</span>
-                  </div>
-                </div>
-
-                {street.policeAdvisory && (
-                  <div className="radar-advisory-box">
-                    <Shield size={12} color="#38bdf8" />
-                    <span>Police Advisory: {street.policeAdvisory}</span>
-                  </div>
-                )}
-
                 <button
-                  className="radar-locate-btn"
-                  onClick={() => handleLocateStreet(street)}
+                  type="button"
+                  className="notif-banner-action-btn"
+                  onClick={handleEnablePush}
                 >
-                  <Navigation size={13} />
-                  <span>Pinpoint Corridor on Map</span>
+                  Turn On
                 </button>
               </div>
-            ))
-          ) : (
-            <div className="radar-empty-state">
-              <div className="radar-all-clear-circle">
-                <CheckCircle2 size={32} color="#22c55e" />
-              </div>
-              <h4>All Clear Within 50 km</h4>
-              <p>
-                No heavy choke points or critical gridlocks reported within the 50 km jurisdiction radius around {cityName} Division.
-              </p>
-              <div className="clean-radius-note">
-                <Sparkles size={13} color="#22c55e" />
-                <span>Surveillance active • 10-minute auto telemetry check</span>
-              </div>
-            </div>
-          )}
-        </div>
+            )}
 
-        {/* Footer Info */}
-        <div className="radar-sheet-footer">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <Radio size={11} color="#22c55e" />
-            <span>50 km Police Radar Grid • Real-Time Highway Feed</span>
+            {heavyStreets.length > 0 ? (
+              <div className="notif-cards-list">
+                {heavyStreets.map((street, idx) => (
+                  <NotificationAlertItem
+                    key={street.id || street.name || idx}
+                    street={street}
+                    onLocate={handleLocateStreet}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="notif-empty-state">
+                <div className="notif-empty-icon-wrap">
+                  <CheckCircle2 size={32} />
+                </div>
+                <h4 className="notif-empty-title">No Heavy Traffic</h4>
+                <p className="notif-empty-desc">
+                  No heavy traffic disruptions currently detected in {cityName}. Notifications trigger if and only if real-time heavy traffic occurs in your IP location, and stay active for 24 hours.
+                </p>
+              </div>
+            )}
           </div>
-          <button className="radar-close-btn" onClick={onClose}>
-            Close
+        )}
+
+        {/* Tab Content: Push Notification Settings */}
+        {activeTab === 'settings' && (
+          <NotificationPushSettings
+            permission={reduxPermission}
+            testSent={testSent}
+            onEnablePush={handleEnablePush}
+            onSendTestPush={handleSendTestPush}
+            onTriggerPopupAlert={() => {
+              const alert = generateSuddenTrafficAlert();
+              playAlertChime();
+              dispatch(triggerSuddenAlert(alert));
+              handleClose();
+            }}
+          />
+        )}
+
+        {/* Footer */}
+        <div className="notif-panel-footer">
+          <div className="footer-live-status">
+            <span className="live-dot-pulse" />
+            <span>Live Arterial Feed • Redux State Managed</span>
+          </div>
+          <button type="button" className="notif-dismiss-btn" onClick={handleClose}>
+            Dismiss
           </button>
         </div>
       </div>

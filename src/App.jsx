@@ -1,17 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import MobileFrame from './components/MobileFrame';
 import CitySearchPage from './components/CitySearchPage';
 import TrafficMapPage from './components/TrafficMapPage';
+import TrafficPopupAlert from './components/notifications/TrafficPopupAlert';
+import { useSuddenTrafficWatcher } from './hooks/useSuddenTrafficWatcher';
+import {
+  toggleTheme,
+  setCurrentPage,
+  setSelectedCity,
+} from './store/uiSlice';
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState('search'); // 'search' (Page 1) | 'map' (Page 2)
-  const [selectedCity, setSelectedCity] = useState(null);
-  const [theme, setTheme] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('gatilive_theme') || 'night';
-    }
-    return 'night';
-  });
+  const dispatch = useDispatch();
+  const theme = useSelector((state) => state.ui.theme);
+  const currentPage = useSelector((state) => state.ui.currentPage);
+  const selectedCity = useSelector((state) => state.ui.selectedCity);
+
+  // Background watcher for random sudden local traffic changes & IP geolocation
+  useSuddenTrafficWatcher();
 
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
 
@@ -19,7 +26,7 @@ export default function App() {
   useEffect(() => {
     try {
       localStorage.removeItem('gatilive_google_maps_key');
-    } catch (e) {
+    } catch {
       // ignore
     }
   }, []);
@@ -27,34 +34,28 @@ export default function App() {
   // Update root attribute and persist theme
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
-    try {
-      localStorage.setItem('gatilive_theme', theme);
-    } catch (e) {
-      // ignore
-    }
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === 'night' ? 'day' : 'night'));
+  const handleToggleTheme = () => {
+    dispatch(toggleTheme());
   };
 
   const handleSelectCity = (city) => {
-    setSelectedCity(city);
-    setCurrentPage('map');
+    dispatch(setSelectedCity(city));
   };
 
   const handleBackToSearch = () => {
-    setCurrentPage('search');
+    dispatch(setCurrentPage('search'));
   };
 
   return (
     <div data-theme={theme} className="app-theme-provider">
-      <MobileFrame theme={theme} onToggleTheme={toggleTheme}>
+      <MobileFrame theme={theme} onToggleTheme={handleToggleTheme}>
         {currentPage === 'search' || !selectedCity ? (
           <CitySearchPage
             onSelectCity={handleSelectCity}
             theme={theme}
-            onToggleTheme={toggleTheme}
+            onToggleTheme={handleToggleTheme}
           />
         ) : (
           <TrafficMapPage
@@ -63,12 +64,13 @@ export default function App() {
             onBack={handleBackToSearch}
             apiKey={apiKey}
             theme={theme}
-            onToggleTheme={toggleTheme}
+            onToggleTheme={handleToggleTheme}
           />
         )}
+
+        {/* Real-time Pop-up Notification for Sudden Local Traffic Changes */}
+        <TrafficPopupAlert />
       </MobileFrame>
     </div>
   );
 }
-
-

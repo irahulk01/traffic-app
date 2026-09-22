@@ -53,9 +53,9 @@ export async function requestNotificationPermission() {
  * Push native notification directly to Mobile Notification Tray
  */
 export async function sendMobileTrafficPush({
-  title = '🚨 GatiLive 50km Heavy Traffic Alert',
-  body = 'Heavy congestion reported in your 50km radius zone.',
-  tag = 'gatilive-alert',
+  title = '🚨 Heavy Traffic Alert',
+  body = 'Heavy congestion reported along monitored routes.',
+  tag = 'traffic-alert',
   data = {},
 } = {}) {
   // If permission not granted, request first
@@ -113,9 +113,9 @@ export async function sendMobileTrafficPush({
  * Format and dispatch an alert for a specific heavy traffic corridor
  */
 export async function dispatchHeavyTrafficAlert(street, cityName = '') {
-  const distText = street.distanceKm ? ` (${street.distanceKm} km away)` : ' (Within 50km)';
+  const distText = street.distanceKm ? ` (${street.distanceKm} km away)` : '';
   const title = `🚨 Severe Traffic: ${street.name}${distText}`;
-  const body = `${street.delay || 'Heavy delays'} • Crawl speed: ${street.speed} km/h • ${street.policeAdvisory || 'Police on alert'}`;
+  const body = `${street.delay || 'Heavy delays'} • Crawl speed: ${street.speed} km/h • ${street.trafficAdvisory || street.advisory || 'Slow moving traffic'}`;
 
   return sendMobileTrafficPush({
     title,
@@ -128,3 +128,4 @@ export async function dispatchHeavyTrafficAlert(street, cityName = '') {
     },
   });
 }
+
