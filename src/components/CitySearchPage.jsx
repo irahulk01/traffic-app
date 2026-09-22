@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import {
   Search,
   MapPin,
@@ -8,136 +8,105 @@ import {
   Radio,
   AlertTriangle,
   CheckCircle2,
-  Clock,
-  Filter,
   Crosshair,
   Loader2,
   AlertCircle,
   Bell,
+  Activity,
+  Compass,
+  ChevronLeft,
+  ChevronRight,
+  Sun,
+  Moon,
+  PhoneCall,
+  Flame,
 } from 'lucide-react';
 import { searchIndianCities, findNearestIndianCity } from '../data/citiesService';
 import TrafficAlertModal from './TrafficAlertModal';
 import { getHeavyTrafficUnder50Km } from '../data/trafficEngine';
 
-
-// Priority monitored jurisdictions for Traffic Police
-const POLICE_MONITORED_JURISDICTIONS = [
+// Verified monitored high-traffic divisions (4 Core Indian Police Hubs)
+export const POLICE_MONITORED_JURISDICTIONS = [
   {
     name: 'Hazaribagh',
+    division: 'Hazaribagh Traffic Division',
     state: 'Jharkhand',
     stateCode: 'JH',
     lat: 23.9924,
     lng: 85.3616,
     statusLevel: 'heavy',
-    statusLabel: 'Critical Jhanda Chowk Delay',
-    delayText: '+22m Delay on NH-33',
-    patrolUnits: '6 Active Patrols',
+    statusLabel: 'Critical Bottleneck at Jhanda Chowk & NH-33',
+    delayText: '+22 mins arterial delay',
+    patrolUnits: '6 Police Patrol Units on Duty',
     corridorSummary: '3 Heavy • 2 Moderate • 3 Clear',
+    hqLandmark: 'Control Room: Sadar Thana Hub',
   },
   {
     name: 'Giridih',
+    division: 'Giridih Traffic Division',
     state: 'Jharkhand',
     stateCode: 'JH',
     lat: 24.2500,
     lng: 85.9167,
     statusLevel: 'heavy',
-    statusLabel: 'Tower Chowk Bottleneck',
-    delayText: '+19m Delay on Main Road',
-    patrolUnits: '4 Active Patrols',
+    statusLabel: 'Severe Choke Point near Tower Chowk',
+    delayText: '+19 mins arterial delay',
+    patrolUnits: '4 Police Patrol Units on Duty',
     corridorSummary: '2 Heavy • 2 Moderate • 3 Clear',
+    hqLandmark: 'Control Room: Tower Chowk Post',
   },
   {
     name: 'Ranchi',
+    division: 'Ranchi Traffic Division',
     state: 'Jharkhand',
     stateCode: 'JH',
     lat: 23.3432,
     lng: 85.3094,
     statusLevel: 'moderate',
-    statusLabel: 'Kantatoli & Main Road Slowdowns',
-    delayText: '+11m Peak Hour Slowdown',
-    patrolUnits: '12 Active Patrols',
+    statusLabel: 'Moderate Slowdown at Kantatoli & Main Road',
+    delayText: '+11 mins peak hour delay',
+    patrolUnits: '12 Police Patrol Units on Duty',
     corridorSummary: '3 Heavy • 4 Moderate • 5 Clear',
+    hqLandmark: 'Control Room: Kantatoli Chowk Post',
   },
   {
     name: 'Dhanbad',
+    division: 'Dhanbad Traffic Division',
     state: 'Jharkhand',
     stateCode: 'JH',
     lat: 23.7957,
     lng: 86.4304,
     statusLevel: 'heavy',
-    statusLabel: 'Bank More Commercial Gridlock',
-    delayText: '+18m Delay on GT Road',
-    patrolUnits: '8 Active Patrols',
+    statusLabel: 'Commercial Truck Gridlock on Bank More & GT Road',
+    delayText: '+18 mins arterial delay',
+    patrolUnits: '8 Police Patrol Units on Duty',
     corridorSummary: '4 Heavy • 2 Moderate • 4 Clear',
-  },
-  {
-    name: 'Bokaro',
-    state: 'Jharkhand',
-    stateCode: 'JH',
-    lat: 23.6693,
-    lng: 86.1511,
-    statusLevel: 'low',
-    statusLabel: 'Normal Industrial Flow',
-    delayText: 'On Time (0 delay)',
-    patrolUnits: '5 Active Patrols',
-    corridorSummary: '0 Heavy • 2 Moderate • 6 Clear',
-  },
-  {
-    name: 'Patna',
-    state: 'Bihar',
-    stateCode: 'BR',
-    lat: 25.5941,
-    lng: 85.1376,
-    statusLevel: 'heavy',
-    statusLabel: 'Dak Bungalow & Bailey Road Alert',
-    delayText: '+24m Delay on Bailey Rd',
-    patrolUnits: '15 Active Patrols',
-    corridorSummary: '5 Heavy • 3 Moderate • 4 Clear',
-  },
-  {
-    name: 'Delhi',
-    state: 'Delhi',
-    stateCode: 'DL',
-    lat: 28.6139,
-    lng: 77.2090,
-    statusLevel: 'heavy',
-    statusLabel: 'Ring Road & ITO Junction Grid',
-    delayText: '+28m Peak Congestion',
-    patrolUnits: '24 Active Patrols',
-    corridorSummary: '6 Heavy • 5 Moderate • 3 Clear',
-  },
-  {
-    name: 'Bengaluru',
-    state: 'Karnataka',
-    stateCode: 'KA',
-    lat: 12.9716,
-    lng: 77.5946,
-    statusLevel: 'heavy',
-    statusLabel: 'Silk Board & Outer Ring Road',
-    delayText: '+32m Critical Delay',
-    patrolUnits: '20 Active Patrols',
-    corridorSummary: '7 Heavy • 4 Moderate • 3 Clear',
+    hqLandmark: 'Control Room: Bank More Chowk Hub',
   },
 ];
 
-const STATE_FILTERS = [
-  { label: 'All Jurisdictions', code: 'ALL' },
-  { label: 'Jharkhand (JH)', code: 'JH' },
-  { label: 'Bihar (BR)', code: 'BR' },
-  { label: 'Delhi (DL)', code: 'DL' },
-  { label: 'Karnataka (KA)', code: 'KA' },
-];
-
-export default function CitySearchPage({ onSelectCity }) {
+export default function CitySearchPage({ onSelectCity, theme = 'night', onToggleTheme }) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedStateFilter, setSelectedStateFilter] = useState('ALL');
   const [isDetecting, setIsDetecting] = useState(false);
   const [detectError, setDetectError] = useState('');
+  const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+  const priorityTrackRef = useRef(null);
+
+  const scrollPriority = (direction) => {
+    if (priorityTrackRef.current) {
+      const scrollAmount = 350;
+      priorityTrackRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth',
+      });
+    }
+  };
+
 
   // Handle GPS location detection
   const handleDetectLocation = () => {
     if (!navigator.geolocation) {
-      setDetectError('GPS geolocation not supported by your browser');
+      setDetectError('GPS location service not supported on this browser.');
       setTimeout(() => setDetectError(''), 4000);
       return;
     }
@@ -153,7 +122,7 @@ export default function CitySearchPage({ onSelectCity }) {
           // Attempt reverse geocoding via Nominatim
           const res = await fetch(
             `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
-            { signal: AbortSignal.timeout(3000) }
+            { signal: AbortSignal.timeout(3500) }
           );
 
           if (res.ok) {
@@ -189,15 +158,15 @@ export default function CitySearchPage({ onSelectCity }) {
         if (nearestCity) {
           onSelectCity(nearestCity);
         } else {
-          setDetectError('No Indian city found near your current location.');
+          setDetectError('No supported traffic division found near your location.');
           setTimeout(() => setDetectError(''), 4000);
         }
       },
       (err) => {
         setIsDetecting(false);
         console.warn('GPS Error:', err);
-        let msg = 'Location access denied. Please search manually.';
-        if (err.code === 2) msg = 'Location unavailable on device.';
+        let msg = 'Location access denied. Please search city manually.';
+        if (err.code === 2) msg = 'GPS signal unavailable on device.';
         if (err.code === 3) msg = 'Location detection timed out.';
         setDetectError(msg);
         setTimeout(() => setDetectError(''), 4000);
@@ -206,9 +175,7 @@ export default function CitySearchPage({ onSelectCity }) {
     );
   };
 
-  const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
-
-  // 50km heavy alerts for primary monitored jurisdiction (Hazaribagh Command Hub)
+  // 50km heavy alerts for primary monitored jurisdiction (Hazaribagh Hub)
   const radarAlerts = useMemo(() => {
     return getHeavyTrafficUnder50Km({
       name: 'Hazaribagh',
@@ -218,242 +185,351 @@ export default function CitySearchPage({ onSelectCity }) {
     });
   }, []);
 
-  // Search results across all 4,242 Indian cities
+  // Search results across cities
   const searchResults = useMemo(() => {
-    const results = searchIndianCities(searchQuery, 40);
-    if (selectedStateFilter === 'ALL') return results;
-    return results.filter((c) => c.stateCode === selectedStateFilter);
-  }, [searchQuery, selectedStateFilter]);
+    return searchIndianCities(searchQuery, 40);
+  }, [searchQuery]);
 
-  // Monitored cards filtered by selected state
-  const displayedPriorityCards = useMemo(() => {
-    if (selectedStateFilter === 'ALL') return POLICE_MONITORED_JURISDICTIONS;
-    return POLICE_MONITORED_JURISDICTIONS.filter(
-      (c) => c.stateCode === selectedStateFilter
-    );
-  }, [selectedStateFilter]);
+  const displayedPriorityCards = POLICE_MONITORED_JURISDICTIONS;
 
   return (
-    <div className="search-page">
-      {/* Official Traffic Police & Command Header */}
-      <div className="police-command-hero">
-        <div className="command-header-top-bar">
-          <div className="police-header-badge">
-            <Shield size={13} color="#60a5fa" />
-            <span>Traffic Police Command • 50km Radar Grid</span>
-            <div className="live-pulse-dot" />
+    <div className="search-page-scroll-wrap">
+      {/* Top Police Control Room Brand Header */}
+      <header className="brand-header-bar">
+        <div className="brand-logo-group">
+          <div className="brand-icon-box police-badge-icon-box">
+            <Shield size={20} className="brand-icon" />
           </div>
+          <div className="brand-text">
+            <div className="brand-title-row">
+              <span className="brand-name">GatiLive</span>
+              <span className="police-flag-pill">TRAFFIC POLICE</span>
+            </div>
+            <span className="brand-tagline">Arterial Monitoring & Control Portal</span>
+          </div>
+        </div>
+
+        <div className="header-actions-group">
+          <div className="radar-status-badge police-status-badge">
+            <div className="live-status-dot" />
+            <span>50 km Radar Grid Active</span>
+          </div>
+
+          {/* High-Visibility Day / Night Toggle */}
+          <button
+            type="button"
+            className="theme-toggle-btn"
+            onClick={onToggleTheme}
+            title={theme === 'day' ? 'Switch to Night Command Mode (Low Light)' : 'Switch to Day Patrol Visibility Mode (High Contrast)'}
+          >
+            {theme === 'day' ? <Moon size={15} /> : <Sun size={15} />}
+            <span className="theme-toggle-label">{theme === 'day' ? 'Night Mode' : 'Day Mode'}</span>
+          </button>
 
           <button
             type="button"
-            className={`header-btn notification-bell-btn ${radarAlerts.heavyAlerts.length > 0 ? 'has-alerts' : ''}`}
+            className={`notification-icon-btn ${radarAlerts.heavyAlerts.length > 0 ? 'active-alerts' : ''}`}
             onClick={() => setIsAlertModalOpen(true)}
-            title="50km Heavy Traffic Alerts & Mobile Push"
+            title="50km Heavy Bottleneck Alerts & Police Dispatch Push"
           >
-            <Bell size={16} />
+            <Bell size={17} />
             {radarAlerts.heavyAlerts.length > 0 && (
-              <span className="bell-badge-count">{radarAlerts.heavyAlerts.length}</span>
+              <span className="notification-pill-count">
+                {radarAlerts.heavyAlerts.length}
+              </span>
             )}
           </button>
         </div>
+      </header>
 
-        <h2>
-          India Traffic <span>Control Portal</span>
-        </h2>
-
-        <p>
-          Real-time arterial congestion, corridor speeds, and traffic warden dispatch data
-        </p>
-
-        {/* Live Operational Metrics Ribbon */}
-        <div className="police-stats-ribbon">
-          <div className="police-stat-pill">
-            <Radio size={11} color="#22c55e" />
-            <span>10-Min Live Feed</span>
+      {/* Hero Welcome & Overview */}
+      <section className="hero-command-section">
+        <div className="hero-text-content">
+          <div className="hero-eyebrow police-eyebrow">
+            <Shield size={13} className="eyebrow-icon" />
+            <span>झारखंड पुलिस • Jharkhand Traffic Police Command & Commuter Portal</span>
           </div>
-          <div className="police-stat-pill">
-            <CheckCircle2 size={11} color="#60a5fa" />
-            <span>4,242 Cities Indexed</span>
-          </div>
-          <div className="police-stat-pill">
-            <Clock size={11} color="#f59e0b" />
-            <span>Rate-Limit Protected</span>
+          <h1 className="hero-heading">
+            Live City Traffic & <span>Arterial Control Grid</span>
+          </h1>
+          <p className="hero-description">
+            Real-time arterial choke points, crawl speeds, and 50 km perimeter monitoring across Hazaribagh, Giridih, Ranchi, and Dhanbad traffic divisions.
+          </p>
+        </div>
+
+        {/* Quick Hub Jump Bar */}
+        <div className="quick-hub-jump-bar">
+          <span className="quick-hub-label">Quick Jump to Division:</span>
+          <div className="quick-hub-chips">
+            {POLICE_MONITORED_JURISDICTIONS.map((hub) => (
+              <button
+                key={hub.name}
+                type="button"
+                className={`quick-hub-chip ${hub.statusLevel === 'heavy' ? 'chip-heavy' : 'chip-moderate'}`}
+                onClick={() => onSelectCity(hub)}
+              >
+                <span className={`chip-dot ${hub.statusLevel}`} />
+                <span className="chip-city-name">{hub.name}</span>
+                <span className="chip-delay-badge">{hub.delayText.split(' ')[0]}</span>
+              </button>
+            ))}
           </div>
         </div>
-      </div>
 
-      {/* Primary City Search Box with Detect Me Button Inside */}
-      <div className="search-box-container">
-        <div className="search-input-wrapper">
-          <Search size={18} className="search-icon" />
+        {/* Live Metrics Ribbon */}
+        <div className="hero-stats-row">
+          <div className="hero-stat-card">
+            <Radio size={15} className="stat-icon-green" />
+            <div className="stat-text">
+              <span className="stat-value">10-Min Live Feed</span>
+              <span className="stat-label">Continuous Road Telemetry</span>
+            </div>
+          </div>
+
+          <div className="hero-stat-card">
+            <Compass size={15} className="stat-icon-blue" />
+            <div className="stat-text">
+              <span className="stat-value">50 km Jurisdiction</span>
+              <span className="stat-label">Highway & Chowk Radar</span>
+            </div>
+          </div>
+
+          <div className="hero-stat-card">
+            <CheckCircle2 size={15} className="stat-icon-gold" />
+            <div className="stat-text">
+              <span className="stat-value">4 Monitored Hubs</span>
+              <span className="stat-label">Hazaribagh • Giridih • Ranchi • Dhanbad</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Modern Floating Search Island */}
+      <section className="search-island-container">
+        <div className="search-island-box">
+          <Search size={19} className="search-island-icon" />
           <input
             type="text"
-            className="search-input"
-            placeholder="Search city / district (e.g. Hazaribagh, Giridih)..."
+            className="search-island-input"
+            placeholder="Search division, chowk, NH highway, or landmark (e.g. Hazaribagh, Giridih, Ranchi)..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
 
           {searchQuery && (
             <button
+              type="button"
               className="clear-search-btn"
               onClick={() => setSearchQuery('')}
-              title="Clear Search"
+              title="Clear search input"
             >
-              <X size={14} />
+              <X size={15} />
             </button>
           )}
 
-          {/* Detect Me Button */}
+          {/* Integrated Detect Location Button */}
           <button
             type="button"
-            className={`detect-me-btn ${isDetecting ? 'detecting' : ''}`}
+            className={`detect-location-pill ${isDetecting ? 'detecting' : ''}`}
             onClick={handleDetectLocation}
             disabled={isDetecting}
-            title="Detect my current location"
+            title="Detect nearest traffic division via GPS"
           >
             {isDetecting ? (
-              <Loader2 size={13} className="spin-icon" />
+              <Loader2 size={14} className="spinning-loader" />
             ) : (
-              <Crosshair size={13} />
+              <Crosshair size={14} />
             )}
-            <span>{isDetecting ? 'Detecting...' : 'Detect Me'}</span>
+            <span>{isDetecting ? 'Locating...' : 'Detect Division'}</span>
           </button>
         </div>
 
-        {/* Location Detection Error Toast */}
+        {/* Location Detection Toast Message */}
         {detectError && (
-          <div className="detect-error-toast">
-            <AlertCircle size={13} />
+          <div className="search-error-toast">
+            <AlertCircle size={14} />
             <span>{detectError}</span>
           </div>
         )}
-      </div>
+      </section>
 
-
-      {/* State Filter Tabs */}
-      <div className="state-filter-container">
-        <div className="filter-label-row">
-          <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <Filter size={12} color="#94a3b8" />
-            Filter By State
-          </span>
-          <span style={{ fontSize: 10, color: '#64748b' }}>
-            Official Police Zones
-          </span>
-        </div>
-        <div className="state-filter-chips">
-          {STATE_FILTERS.map((f) => (
-            <button
-              key={f.code}
-              className={`state-filter-btn ${
-                selectedStateFilter === f.code ? 'active' : ''
-              }`}
-              onClick={() => setSelectedStateFilter(f.code)}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Priority Monitored Jurisdictions (When not performing specific text query) */}
+      {/* Priority Monitored Jurisdictions Horizontally Movable Carousel */}
       {!searchQuery && (
-        <div className="priority-jurisdiction-section">
-          <div className="section-label">
-            <span>High-Priority Police Jurisdictions</span>
-            <span style={{ fontSize: 10, color: '#22c55e' }}>● Live Feed Active</span>
-          </div>
-
-          <div className="jurisdiction-grid">
-            {displayedPriorityCards.map((j) => (
-              <div
-                key={j.name}
-                className={`jurisdiction-card severity-${j.statusLevel}`}
-                onClick={() => onSelectCity(j)}
-              >
-                <div className="jurisdiction-card-header">
-                  <div className="jurisdiction-title-group">
-                    <span className="jurisdiction-name">{j.name}</span>
-                    <span className="jurisdiction-state-tag">
-                      {j.state} • {j.stateCode}
-                    </span>
-                  </div>
-                  <div className={`jurisdiction-pill level-${j.statusLevel}`}>
-                    <span className="pill-dot" />
-                    <span>{j.statusLevel === 'heavy' ? 'Heavy' : j.statusLevel === 'moderate' ? 'Moderate' : 'Low'}</span>
-                  </div>
-                </div>
-
-                <div className="jurisdiction-advisory">
-                  <AlertTriangle
-                    size={13}
-                    color={j.statusLevel === 'heavy' ? '#ef4444' : '#f97316'}
-                  />
-                  <span>{j.statusLabel}</span>
-                </div>
-
-                <div className="jurisdiction-footer">
-                  <span style={{ color: '#cbd5e1', fontWeight: 600 }}>
-                    {j.delayText}
-                  </span>
-                  <span className="view-link">
-                    <span>Dispatch Map</span>
-                    <ArrowRight size={12} />
-                  </span>
-                </div>
+        <section className="priority-section">
+          <div className="section-header-row">
+            <div>
+              <h2 className="section-title">Monitored Traffic Divisions (4)</h2>
+              <p className="section-subtext">Swipe or use arrows to view live corridor telemetry, active patrols, and chowk bottlenecks</p>
+            </div>
+            
+            <div className="section-header-actions-right">
+              <div className="section-live-tag">
+                <span className="live-dot" />
+                <span>Live Feed Active</span>
               </div>
-            ))}
+
+              {/* Navigation arrows */}
+              <div className="carousel-nav-arrows">
+                <button
+                  type="button"
+                  className="carousel-nav-arrow-btn"
+                  onClick={() => scrollPriority('left')}
+                  title="Scroll left"
+                  aria-label="Scroll left"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                <button
+                  type="button"
+                  className="carousel-nav-arrow-btn"
+                  onClick={() => scrollPriority('right')}
+                  title="Scroll right"
+                  aria-label="Scroll right"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-      )}
 
-      {/* Search Results List (Across 4,242 Indian Cities) */}
-      <div className="city-results-container" style={{ marginTop: 16 }}>
-        <div className="section-label">
-          <span>
-            {searchQuery
-              ? `Search Results (${searchResults.length})`
-              : 'All Administrative Districts'}
-          </span>
-        </div>
+          {/* Horizontally scrollable cards container */}
+          <div className="priority-carousel-wrapper">
+            <div className="priority-cards-carousel" ref={priorityTrackRef}>
+              {displayedPriorityCards.map((j) => {
+                const isHeavy = j.statusLevel === 'heavy';
+                const isModerate = j.statusLevel === 'moderate';
 
-        <div className="city-results-list">
-          {searchResults.length > 0 ? (
-            searchResults.map((city) => (
-              <div
-                key={city.id || city.name}
-                className="city-card-item"
-                onClick={() => onSelectCity(city)}
-              >
-                <div className="city-info-group">
-                  <div className="city-pin-icon">
-                    <MapPin size={17} />
-                  </div>
-                  <div>
-                    <div className="city-name">{city.name}</div>
-                    <div className="city-state">
-                      <span className="state-pill">{city.state}</span>
-                      <span style={{ fontSize: 10.5, color: '#64748b' }}>
-                        {city.lat.toFixed(3)}°N, {city.lng.toFixed(3)}°E
+                return (
+                  <div
+                    key={j.name}
+                    className={`jurisdiction-tile jurisdiction-carousel-tile severity-${j.statusLevel}`}
+                    onClick={() => onSelectCity(j)}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    <div className="tile-top-row">
+                      <div className="tile-title-box">
+                        <span className="tile-city-name">{j.name}</span>
+                        <span className="tile-state-name">{j.division} • {j.state}</span>
+                      </div>
+
+                      <div className={`severity-capsule severity-${j.statusLevel}`}>
+                        <span className="capsule-dot" />
+                        <span>{isHeavy ? 'Heavy Gridlock' : isModerate ? 'Moderate Delay' : 'Smooth Flow'}</span>
+                      </div>
+                    </div>
+
+                    <div className="tile-advisory-box">
+                      <AlertTriangle
+                        size={14}
+                        className={isHeavy ? 'advisory-icon-heavy' : 'advisory-icon-moderate'}
+                      />
+                      <span className="advisory-text">{j.statusLabel}</span>
+                    </div>
+
+                    <div className="tile-metrics-row">
+                      <span className="tile-delay-stat">{j.delayText}</span>
+                      <span className="tile-patrol-stat">{j.patrolUnits}</span>
+                    </div>
+
+                    <div className="tile-footer-row">
+                      <span className="corridor-summary-text">{j.corridorSummary}</span>
+                      <span className="tile-action-link">
+                        <span>Open Control Grid</span>
+                        <ArrowRight size={13} />
                       </span>
                     </div>
                   </div>
-                </div>
-                <ArrowRight size={15} className="city-action-arrow" />
-              </div>
-            ))
-          ) : (
-            <div className="empty-results-box">
-              <MapPin size={30} color="#64748b" />
-              <h4>No jurisdiction found for "{searchQuery}"</h4>
-              <p style={{ fontSize: 12 }}>Check spelling or select a different state filter.</p>
+                );
+              })}
             </div>
-          )}
-        </div>
-      </div>
+          </div>
+        </section>
+      )}
 
-      {/* 50km Radar Alerts Modal for Primary Hub */}
+      {/* Search Results (Only shown when user types in search) */}
+      {searchQuery && (
+        <section className="directory-section search-results-section">
+          <div className="section-header-row">
+            <div>
+              <h2 className="section-title">
+                Matching Cities & Divisions ({searchResults.length})
+              </h2>
+              <p className="section-subtext">
+                Showing matching jurisdictions for "{searchQuery}"
+              </p>
+            </div>
+          </div>
+
+          <div className="directory-list-container">
+            {searchResults.length > 0 ? (
+              searchResults.map((city) => (
+                <div
+                  key={city.id || `${city.name}-${city.lat}`}
+                  className="directory-item-card"
+                  onClick={() => onSelectCity(city)}
+                  role="button"
+                  tabIndex={0}
+                >
+                  <div className="directory-item-left">
+                    <div className="directory-pin-box">
+                      <MapPin size={16} />
+                    </div>
+                    <div>
+                      <span className="directory-city-title">{city.name}</span>
+                      <div className="directory-meta-row">
+                        <span className="directory-state-tag">{city.state}</span>
+                        <span className="directory-coords">
+                          {city.lat.toFixed(2)}°N, {city.lng.toFixed(2)}°E
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="directory-item-right">
+                    <span className="launch-text">Open Control Grid</span>
+                    <ArrowRight size={15} className="directory-arrow-icon" />
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="directory-empty-state">
+                <MapPin size={34} className="empty-icon" />
+                <h3>No division found for "{searchQuery}"</h3>
+                <p>Try searching for Hazaribagh, Giridih, Ranchi, or Dhanbad.</p>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* National & State Emergency & Highway Helpline Bar */}
+      <footer className="emergency-helpline-bar">
+        <div className="helpline-title-group">
+          <Shield size={16} className="helpline-shield-icon" />
+          <span className="helpline-heading">24x7 Emergency & Highway Helplines:</span>
+        </div>
+        <div className="helpline-badges-row">
+          <a href="tel:112" className="helpline-badge badge-emergency" title="All-India Emergency Response">
+            <span className="helpline-number">🚨 112</span>
+            <span className="helpline-name">National Emergency</span>
+          </a>
+          <a href="tel:1033" className="helpline-badge badge-nhai" title="National Highway Authority of India Assistance">
+            <span className="helpline-number">🛣️ 1033</span>
+            <span className="helpline-name">NHAI Highway Helpline</span>
+          </a>
+          <a href="tel:1073" className="helpline-badge badge-traffic" title="Traffic Police Road Safety & Accident Helpline">
+            <span className="helpline-number">👮 1073</span>
+            <span className="helpline-name">Traffic Control Room</span>
+          </a>
+          <a href="tel:108" className="helpline-badge badge-ambulance" title="Medical Emergency & Ambulance">
+            <span className="helpline-number">🚑 108</span>
+            <span className="helpline-name">Ambulance Service</span>
+          </a>
+        </div>
+      </footer>
+
+      {/* 50km Radar Alerts Modal */}
       <TrafficAlertModal
         isOpen={isAlertModalOpen}
         onClose={() => setIsAlertModalOpen(false)}

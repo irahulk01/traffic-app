@@ -21,7 +21,7 @@ import {
 export default function TrafficAlertModal({
   isOpen,
   onClose,
-  cityName = 'Selected Area',
+  cityName = 'Selected Division',
   heavyStreets = [],
   onSelectStreet,
 }) {
@@ -42,8 +42,8 @@ export default function TrafficAlertModal({
     setPermission(res);
     if (res === 'granted') {
       sendMobileTrafficPush({
-        title: '🟢 GatiLive 50km Traffic Radar Active',
-        body: `You will receive live mobile notifications for heavy traffic bottlenecks within 50km of ${cityName}.`,
+        title: '🚨 GatiLive: 50km Traffic Radar Active',
+        body: `You will receive instant mobile alerts for heavy choke points within 50km of ${cityName} Division.`,
         tag: 'gatilive-welcome',
       });
       setTestSent(true);
@@ -54,11 +54,11 @@ export default function TrafficAlertModal({
   const handleSendTestPush = async () => {
     const firstHeavy = heavyStreets[0];
     const title = firstHeavy
-      ? `🚨 Heavy Traffic: ${firstHeavy.name} (${firstHeavy.distanceKm} km away)`
-      : `🚨 Test Alert: 50km Traffic Radar Active for ${cityName}`;
+      ? `🚨 Traffic Alert: ${firstHeavy.name} (${firstHeavy.distanceKm ? `${firstHeavy.distanceKm} km away` : 'Within 50km'})`
+      : `🟢 50km All Clear: ${cityName} Division`;
     const body = firstHeavy
       ? `${firstHeavy.delay} • Crawl speed: ${firstHeavy.speed} km/h • ${firstHeavy.policeAdvisory}`
-      : `All clear within 50km radius. Test notification sent successfully to mobile panel.`;
+      : `All arterial corridors within 50km radius are flowing normally. Test alert received successfully.`;
 
     const success = await sendMobileTrafficPush({
       title,
@@ -89,18 +89,18 @@ export default function TrafficAlertModal({
         <div className="modal-title-row">
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div className="radar-bell-box">
-              <Bell size={18} color="#ef4444" />
+              <Shield size={18} color="#ef4444" />
               <div className="radar-ping-indicator" />
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>
-                  50 km Traffic Radar Alerts
+                  50 km Radar & Choke Point Alerts
                 </h3>
-                <span className="radius-tag-badge">50 KM RADIUS</span>
+                <span className="radius-tag-badge">50 KM RADAR</span>
               </div>
               <p style={{ margin: 0, fontSize: 12, color: '#94a3b8' }}>
-                Active bottlenecks under 50km of {cityName}
+                Active heavy bottlenecks within 50 km of {cityName} Division
               </p>
             </div>
           </div>
@@ -109,23 +109,23 @@ export default function TrafficAlertModal({
           </button>
         </div>
 
-        {/* PWA Mobile Notification Controls */}
+        {/* Police Mobile Notification Controls */}
         <div className="pwa-push-card">
           <div className="pwa-push-left">
-            <Radio size={16} color={permission === 'granted' ? '#22c55e' : '#60a5fa'} />
+            <Radio size={16} color={permission === 'granted' ? '#22c55e' : '#38bdf8'} />
             <div>
               <div className="pwa-push-title">
-                Mobile Notification Panel
+                Mobile Notification Push Alerts
                 {permission === 'granted' ? (
-                  <span className="pwa-badge active">PWA ACTIVE</span>
+                  <span className="pwa-badge active">PUSH ACTIVE</span>
                 ) : (
                   <span className="pwa-badge inactive">TAP TO ENABLE</span>
                 )}
               </div>
               <div className="pwa-push-desc">
                 {permission === 'granted'
-                  ? 'Push enabled: Severe bottlenecks under 50km will alert your notification tray.'
-                  : 'Enable PWA mobile alerts to receive notifications in your phone panel.'}
+                  ? 'Active: Critical choke points within 50 km will dispatch notifications straight to your phone tray.'
+                  : 'Enable mobile notifications to receive immediate alerts on your device for road slowdowns.'}
               </div>
             </div>
           </div>
@@ -134,7 +134,7 @@ export default function TrafficAlertModal({
             {permission !== 'granted' ? (
               <button className="pwa-enable-btn" onClick={handleEnablePush}>
                 <Bell size={13} />
-                <span>Enable Alerts</span>
+                <span>Enable Mobile Alerts</span>
               </button>
             ) : (
               <button
@@ -143,7 +143,7 @@ export default function TrafficAlertModal({
                 title="Send a sample notification to your device notification tray"
               >
                 <Send size={13} />
-                <span>{testSent ? 'Alert Dispatched!' : 'Send Test Mobile Push'}</span>
+                <span>{testSent ? 'Alert Dispatched!' : 'Send Test Notification'}</span>
               </button>
             )}
           </div>
@@ -158,11 +158,11 @@ export default function TrafficAlertModal({
                   <div className="radar-badge-group">
                     <span className="heavy-danger-badge">
                       <AlertTriangle size={11} />
-                      HEAVY BOTTLENECK
+                      CRITICAL CHOKE POINT
                     </span>
                     <span className="corridor-dist-badge">
                       <MapPin size={10} />
-                      {street.distanceKm ? `${street.distanceKm} km away` : '< 50 km'}
+                      {street.distanceKm ? `${street.distanceKm} km from Hub` : '< 50 km'}
                     </span>
                   </div>
                   <span className="radar-delay-tag">{street.delay}</span>
@@ -172,14 +172,14 @@ export default function TrafficAlertModal({
 
                 {street.landmark && (
                   <div className="radar-landmark-text">
-                    <MapPin size={11} color="#60a5fa" />
-                    <span>{street.landmark}</span>
+                    <MapPin size={11} color="#38bdf8" />
+                    <span>Chowk / Landmark: {street.landmark}</span>
                   </div>
                 )}
 
                 <div className="radar-metrics-row">
                   <div className="metric-chip">
-                    <span className="label">Current Crawl</span>
+                    <span className="label">Crawl Speed</span>
                     <span className="val danger">{street.speed} km/h</span>
                   </div>
                   <div className="metric-chip">
@@ -194,8 +194,8 @@ export default function TrafficAlertModal({
 
                 {street.policeAdvisory && (
                   <div className="radar-advisory-box">
-                    <Shield size={12} color="#3b82f6" />
-                    <span>{street.policeAdvisory}</span>
+                    <Shield size={12} color="#38bdf8" />
+                    <span>Police Advisory: {street.policeAdvisory}</span>
                   </div>
                 )}
 
@@ -204,7 +204,7 @@ export default function TrafficAlertModal({
                   onClick={() => handleLocateStreet(street)}
                 >
                   <Navigation size={13} />
-                  <span>Locate Corridor on Map</span>
+                  <span>Pinpoint Corridor on Map</span>
                 </button>
               </div>
             ))
@@ -215,11 +215,11 @@ export default function TrafficAlertModal({
               </div>
               <h4>All Clear Within 50 km</h4>
               <p>
-                No heavy bottlenecks or critical congestion reported within the 50km radius zone around {cityName}.
+                No heavy choke points or critical gridlocks reported within the 50 km jurisdiction radius around {cityName} Division.
               </p>
               <div className="clean-radius-note">
                 <Sparkles size={13} color="#22c55e" />
-                <span>Radius monitoring active • Auto-checks every 10 mins</span>
+                <span>Surveillance active • 10-minute auto telemetry check</span>
               </div>
             </div>
           )}
@@ -229,10 +229,10 @@ export default function TrafficAlertModal({
         <div className="radar-sheet-footer">
           <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
             <Radio size={11} color="#22c55e" />
-            <span>50 km Surveillance Grid • Real-Time Google Traffic Filter</span>
+            <span>50 km Police Radar Grid • Real-Time Highway Feed</span>
           </div>
           <button className="radar-close-btn" onClick={onClose}>
-            Done
+            Close
           </button>
         </div>
       </div>

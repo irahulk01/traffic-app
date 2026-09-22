@@ -9,21 +9,27 @@ import {
   ChevronRight,
   Shield,
   Radio,
-  CheckCircle2,
   Navigation,
   Bell,
+  Sun,
+  Moon,
+  PhoneCall,
+  Flame,
 } from 'lucide-react';
 import GoogleMapView from './GoogleMapView';
 import TrafficAlertModal from './TrafficAlertModal';
 import { getCityTrafficData } from '../data/trafficEngine';
 import { dispatchHeavyTrafficAlert } from '../services/notificationService';
+import { POLICE_MONITORED_JURISDICTIONS } from './CitySearchPage';
 
 export default function TrafficMapPage({
   city,
+  onSelectCity,
   onBack,
   apiKey,
+  theme = 'night',
+  onToggleTheme,
 }) {
-
   const [activeFilter, setActiveFilter] = useState('all'); // 'all' | 'heavy' | 'moderate' | 'low' | 'none'
   const [selectedStreet, setSelectedStreet] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -93,273 +99,329 @@ export default function TrafficMapPage({
   };
 
   return (
-    <div className="traffic-dashboard-page">
-      {/* Official Police Traffic Command Header */}
-      <header className="app-header">
-        <div className="header-left">
-          <button className="header-btn" onClick={onBack} title="Back to Command Hub">
-            <ArrowLeft size={18} />
-          </button>
-          <div className="header-title-group">
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <h1>{city.name} Control Grid</h1>
-              <span className="police-dispatch-badge">50 KM RADAR</span>
-            </div>
-            <div className="header-subtitle">
-              <span>{city.state}, India</span>
-              <span>•</span>
-              <span style={{ color: '#22c55e', display: 'flex', alignItems: 'center', gap: 3 }}>
-                <Radio size={10} /> Live 10-Min Feed
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          {/* Notification Bell with 50km Heavy Alert Counter */}
-          <button
-            className={`header-btn notification-bell-btn ${heavyStreetsUnder50.length > 0 ? 'has-alerts' : ''}`}
-            onClick={() => setIsAlertModalOpen(true)}
-            title="50km Heavy Traffic Alerts & Mobile Notification Push"
-          >
-            <Bell size={16} />
-            {heavyStreetsUnder50.length > 0 && (
-              <span className="bell-badge-count">{heavyStreetsUnder50.length}</span>
-            )}
-          </button>
-
-          {/* 10-Minute Auto-Refresh Countdown Display */}
-          <div className="sync-timer-chip" title="Real-time data auto-fetches every 10 minutes">
-            <Clock size={11} color="#60a5fa" />
-            <span>{countdownFormatted}</span>
-          </div>
-
-          <button
-            className="header-btn"
-            onClick={handleManualRefresh}
-            title="Force Live Data Sync"
-          >
-            <RotateCw
-              size={15}
-              style={{
-                transform: isRefreshing ? 'rotate(360deg)' : 'none',
-                transition: 'transform 0.6s ease',
-              }}
-            />
-          </button>
-        </div>
-      </header>
-
-      {/* TOP 50% OF SCREEN: Interactive Google Map with Live TrafficLayer & 50km Radar Perimeter */}
-      <GoogleMapView
-        city={city}
-        streets={streets}
-        selectedStreet={selectedStreet}
-        apiKey={apiKey}
-      />
-
-
-
-      {/* BOTTOM 50% OF SCREEN: Traffic Police Arterial Feed & Controls */}
-      <div className="feed-half-container">
-        {/* Real-Time Jurisdiction Summary Bar */}
-        <div className="traffic-summary-banner">
-          <div className="summary-score-group">
-            <div
-              className={`congestion-gauge-box ${
-                summary.congestionScore >= 55
-                  ? 'heavy'
-                  : summary.congestionScore >= 30
-                  ? 'moderate'
-                  : 'low'
-              }`}
+    <div className="traffic-dashboard-viewport">
+      {/* LEFT / PRIMARY TELEMETRY PANEL */}
+      <aside className="telemetry-panel">
+        {/* Navigation & Status Header */}
+        <header className="telemetry-header">
+          <div className="telemetry-header-left">
+            <button
+              type="button"
+              className="back-nav-btn"
+              onClick={onBack}
+              title="Return to City Selection"
             >
-              <TrendingUp size={15} />
-              <span>{summary.congestionScore}%</span>
-            </div>
-            <div className="summary-stats-text">
-              <span className="summary-stats-title">{summary.statusLabel}</span>
-              <span className="summary-stats-sub">
-                Synced at {summary.lastUpdatedTime} • 10m TTL
-              </span>
-            </div>
-          </div>
-
-          <div className="summary-quick-stats">
-            <div className="quick-stat-item">
-              <span className="quick-stat-val">{summary.avgSpeed} km/h</span>
-              <span className="quick-stat-lbl">Avg Transit</span>
-            </div>
-            <div className="quick-stat-item">
-              <span className="quick-stat-val" style={{ color: '#ef4444' }}>
-                {summary.heavyCount}
-              </span>
-              <span className="quick-stat-lbl">Severe</span>
+              <ArrowLeft size={17} />
+            </button>
+            <div className="telemetry-title-group">
+              <div className="city-title-row">
+                <h1 className="city-display-name">{city.name}</h1>
+                <span className="radar-perimeter-pill">50 KM RADAR</span>
+              </div>
+              <div className="city-meta-row">
+                <span>{city.state || 'Jharkhand'} Traffic Police</span>
+                <span className="meta-separator">•</span>
+                <span className="live-feed-text">
+                  <span className="pulse-beacon-dot" />
+                  Live Feed
+                </span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Severity Filter Tabs (All / Heavy / Moderate / Low / No Traffic) */}
-        <div className="filter-tabs-row">
-          <button
-            className={`filter-tab-btn ${activeFilter === 'all' ? 'active' : ''}`}
-            onClick={() => setActiveFilter('all')}
-          >
-            <span>All Corridors</span>
-            <span className="filter-badge-count">{summary.totalCount}</span>
-          </button>
+          <div className="telemetry-header-actions">
+            {/* Day / Night Theme Toggle */}
+            <button
+              type="button"
+              className="header-action-btn theme-quick-toggle-btn"
+              onClick={onToggleTheme}
+              title={theme === 'day' ? 'Switch to Night Command Mode' : 'Switch to Day Patrol Visibility Mode'}
+            >
+              {theme === 'day' ? <Moon size={15} /> : <Sun size={15} />}
+            </button>
 
-          <button
-            className={`filter-tab-btn heavy-tab ${
-              activeFilter === 'heavy' ? 'active' : ''
-            }`}
-            onClick={() => setActiveFilter('heavy')}
-          >
-            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#ef4444' }} />
-            <span>Heavy (Red)</span>
-            <span className="filter-badge-count">{summary.heavyCount}</span>
-          </button>
+            {/* Notification Bell with 50km Alert Counter */}
+            <button
+              type="button"
+              className={`header-action-btn bell-alert-btn ${heavyStreetsUnder50.length > 0 ? 'has-active-alerts' : ''}`}
+              onClick={() => setIsAlertModalOpen(true)}
+              title="50km Heavy Bottleneck Alerts & Police Dispatch Push"
+            >
+              <Bell size={16} />
+              {heavyStreetsUnder50.length > 0 && (
+                <span className="bell-badge-pill">{heavyStreetsUnder50.length}</span>
+              )}
+            </button>
 
-          <button
-            className={`filter-tab-btn moderate-tab ${
-              activeFilter === 'moderate' ? 'active' : ''
-            }`}
-            onClick={() => setActiveFilter('moderate')}
-          >
-            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#f97316' }} />
-            <span>Moderate (Orange)</span>
-            <span className="filter-badge-count">{summary.moderateCount}</span>
-          </button>
+            {/* 10-Minute Auto-Refresh Countdown Display */}
+            <div className="sync-countdown-pill" title="Telemetry auto-refreshes every 10 minutes">
+              <Clock size={12} className="countdown-icon" />
+              <span>{countdownFormatted}</span>
+            </div>
 
-          <button
-            className={`filter-tab-btn low-tab ${
-              activeFilter === 'low' ? 'active' : ''
-            }`}
-            onClick={() => setActiveFilter('low')}
-          >
-            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#22c55e' }} />
-            <span>Low (Green)</span>
-            <span className="filter-badge-count">{summary.lowCount}</span>
-          </button>
+            {/* Manual Sync Trigger */}
+            <button
+              type="button"
+              className="header-action-btn refresh-sync-btn"
+              onClick={handleManualRefresh}
+              title="Force Live Data Sync"
+            >
+              <RotateCw
+                size={15}
+                className={isRefreshing ? 'spin-animation' : ''}
+              />
+            </button>
+          </div>
+        </header>
 
-          {/* Explicit 'No Traffic' Filter as Requested */}
-          <button
-            className={`filter-tab-btn none-tab ${
-              activeFilter === 'none' ? 'active' : ''
-            }`}
-            onClick={() => setActiveFilter('none')}
-          >
-            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#94a3b8' }} />
-            <span>No Traffic (Clear)</span>
-            <span className="filter-badge-count">{summary.noneCount}</span>
-          </button>
-        </div>
-
-        {/* Scrollable Street Cards Feed */}
-        <div className="street-cards-scroll">
-          {filteredStreets.length > 0 ? (
-            filteredStreets.map((street) => {
-              const isSelected = selectedStreet?.id === street.id;
-
+        {/* Quick Division Switcher Strip */}
+        <div className="quick-division-strip">
+          <span className="division-strip-label">Switch Hub:</span>
+          <div className="division-strip-buttons">
+            {POLICE_MONITORED_JURISDICTIONS.map((hub) => {
+              const isSelected = hub.name.toLowerCase() === city.name.toLowerCase();
               return (
-                <div
-                  key={street.id}
-                  className={`street-card ${street.cardClass} ${
-                    isSelected ? 'selected' : ''
-                  }`}
-                  onClick={() => setSelectedStreet(street)}
+                <button
+                  key={hub.name}
+                  type="button"
+                  className={`division-strip-btn ${isSelected ? 'active' : ''}`}
+                  onClick={() => onSelectCity && onSelectCity(hub)}
                 >
-                  {/* Street Name & Status Badge */}
-                  <div className="street-header-row">
-                    <div className="street-name-box">
-                      <div className="street-name">{street.name}</div>
-                      <div className="street-landmark">
-                        <MapPin size={11} color="#64748b" />
-                        <span>{street.landmark}</span>
+                  <span className={`strip-dot ${hub.statusLevel}`} />
+                  <span>{hub.name}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+
+        {/* Scrollable Telemetry Body */}
+        <div className="telemetry-scroll-body">
+          {/* Real-Time Jurisdiction Summary Card */}
+          <section className="telemetry-summary-card">
+            <div className="summary-card-top">
+              <div className="congestion-gauge-widget">
+                <div
+                  className={`gauge-score-capsule score-${
+                    summary.congestionScore >= 55
+                      ? 'heavy'
+                      : summary.congestionScore >= 30
+                      ? 'moderate'
+                      : 'low'
+                  }`}
+                >
+                  <TrendingUp size={16} />
+                  <span>{summary.congestionScore}%</span>
+                </div>
+                <div className="gauge-text-group">
+                  <span className="congestion-status-title">Traffic: {summary.statusLabel}</span>
+                  <span className="congestion-sync-meta">
+                    Synced at {summary.lastUpdatedTime} • 10m TTL
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="summary-metrics-strip">
+              <div className="summary-metric-box">
+                <span className="metric-box-val">{summary.avgSpeed} <small>km/h</small></span>
+                <span className="metric-box-lbl">Avg Transit Speed</span>
+              </div>
+              <div className="summary-metric-box">
+                <span className="metric-box-val highlight-heavy">{summary.heavyCount}</span>
+                <span className="metric-box-lbl">Heavy Bottlenecks</span>
+              </div>
+              <div className="summary-metric-box">
+                <span className="metric-box-val highlight-total">{summary.totalCount}</span>
+                <span className="metric-box-lbl">Monitored Roads</span>
+              </div>
+            </div>
+          </section>
+
+          {/* Severity Filter Tabs */}
+          <nav className="filter-segmented-bar" aria-label="Filter corridors by severity">
+            <button
+              type="button"
+              className={`filter-segment-btn ${activeFilter === 'all' ? 'active' : ''}`}
+              onClick={() => setActiveFilter('all')}
+            >
+              <span>All Roads</span>
+              <span className="segment-count">{summary.totalCount}</span>
+            </button>
+
+            <button
+              type="button"
+              className={`filter-segment-btn filter-heavy ${activeFilter === 'heavy' ? 'active' : ''}`}
+              onClick={() => setActiveFilter('heavy')}
+            >
+              <span className="segment-dot dot-heavy" />
+              <span>Heavy</span>
+              <span className="segment-count">{summary.heavyCount}</span>
+            </button>
+
+            <button
+              type="button"
+              className={`filter-segment-btn filter-moderate ${activeFilter === 'moderate' ? 'active' : ''}`}
+              onClick={() => setActiveFilter('moderate')}
+            >
+              <span className="segment-dot dot-moderate" />
+              <span>Moderate</span>
+              <span className="segment-count">{summary.moderateCount}</span>
+            </button>
+
+            <button
+              type="button"
+              className={`filter-segment-btn filter-low ${activeFilter === 'low' ? 'active' : ''}`}
+              onClick={() => setActiveFilter('low')}
+            >
+              <span className="segment-dot dot-low" />
+              <span>Smooth</span>
+              <span className="segment-count">{summary.lowCount}</span>
+            </button>
+
+            <button
+              type="button"
+              className={`filter-segment-btn filter-none ${activeFilter === 'none' ? 'active' : ''}`}
+              onClick={() => setActiveFilter('none')}
+            >
+              <span className="segment-dot dot-none" />
+              <span>Clear</span>
+              <span className="segment-count">{summary.noneCount}</span>
+            </button>
+          </nav>
+
+          {/* Arterial Corridors Feed */}
+          <div className="corridor-cards-feed">
+            {filteredStreets.length > 0 ? (
+              filteredStreets.map((street) => {
+                const isSelected = selectedStreet?.id === street.id;
+                const speedPercentage = Math.min(100, Math.round((street.speed / street.speedLimit) * 100));
+
+                return (
+                  <article
+                    key={street.id}
+                    className={`corridor-card severity-${street.level} ${isSelected ? 'corridor-selected' : ''}`}
+                    onClick={() => setSelectedStreet(street)}
+                  >
+                    {/* Header Row */}
+                    <div className="corridor-card-header">
+                      <div className="corridor-name-group">
+                        <h3 className="corridor-name">{street.name}</h3>
+                        <div className="corridor-landmark-row">
+                          <MapPin size={12} className="landmark-pin-icon" />
+                          <span>Chowk / Landmark: {street.landmark}</span>
+                        </div>
+                      </div>
+
+                      <div className={`corridor-badge badge-${street.level}`}>
+                        <span className="badge-pulse-dot" />
+                        <span>{street.badgeText}</span>
                       </div>
                     </div>
 
-                    <div className={`traffic-pill ${street.cardClass}`}>
-                      <div className="traffic-pill-dot" />
-                      <span>{street.badgeText}</span>
-                    </div>
-                  </div>
+                    {/* Metrics Strip */}
+                    <div className="corridor-telemetry-row">
+                      <div className="telemetry-cell">
+                        <span className="telemetry-label">Crawl Speed</span>
+                        <div className="speed-progress-group">
+                          <span className="telemetry-value">
+                            {street.speed} <small>/{street.speedLimit} km/h</small>
+                          </span>
+                          <div className="speed-mini-track">
+                            <div
+                              className={`speed-mini-bar level-${street.level}`}
+                              style={{ width: `${speedPercentage}%` }}
+                            />
+                          </div>
+                        </div>
+                      </div>
 
-                  {/* Traffic Metrics: Speed vs Limit, Delay, Stretch */}
-                  <div className="street-metrics-grid">
-                    <div className="metric-cell">
-                      <span className="metric-lbl">Speed / Limit</span>
-                      <span className="metric-val">
-                        {street.speed} / {street.speedLimit} km/h
+                      <div className="telemetry-cell">
+                        <span className="telemetry-label">Arterial Delay</span>
+                        <span className={`telemetry-value delay-metric-${street.level}`}>
+                          {street.delay}
+                        </span>
+                      </div>
+
+                      <div className="telemetry-cell">
+                        <span className="telemetry-label">Perimeter Radius</span>
+                        <span className="telemetry-value distance-metric">
+                          {street.distanceKm ? `${street.distanceKm} km from Hub` : street.length}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Police Advisory Capsule */}
+                    <div className="police-advisory-capsule">
+                      <Shield size={13} className={`advisory-shield-${street.level}`} />
+                      <span className="advisory-text">Police Advisory: {street.policeAdvisory}</span>
+                    </div>
+
+                    {/* Action Footer */}
+                    <div className="corridor-footer-action">
+                      <span className="corridor-flow-direction">
+                        <Navigation size={12} />
+                        <span>Direction: {street.direction}</span>
+                      </span>
+
+                      <span className="pinpoint-cta-text">
+                        <span>{isSelected ? 'Pinpointed on Map' : 'Pinpoint on Map'}</span>
+                        <ChevronRight size={14} className="cta-arrow" />
                       </span>
                     </div>
+                  </article>
+                );
+              })
+            ) : (
+              <div className="corridors-empty-state">
+                <AlertTriangle size={28} className="empty-state-icon" />
+                <h4>No corridors found under this filter</h4>
+                <p>Select "All Roads" to view the full district monitoring grid.</p>
+              </div>
+            )}
+          </div>
 
-                    <div className="metric-cell">
-                      <span className="metric-lbl">Congestion Delay</span>
-                      <span
-                        className={`metric-val ${
-                          street.level === 'heavy'
-                            ? 'delay-alert'
-                            : street.level === 'moderate'
-                            ? 'moderate-alert'
-                            : street.level === 'none'
-                            ? 'no-traffic-val'
-                            : ''
-                        }`}
-                      >
-                        {street.delay}
-                      </span>
-                    </div>
-
-                    <div className="metric-cell">
-                      <span className="metric-lbl">Distance / Stretch</span>
-                      <span className="metric-val">
-                        {street.distanceKm ? `${street.distanceKm} km away` : street.length}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Traffic Police Dispatch Advisory Banner */}
-                  <div className="police-advisory-box">
-                    <Shield size={12} color={street.color} />
-                    <span>{street.policeAdvisory}</span>
-                  </div>
-
-                  {/* Street Footer / Action */}
-                  <div className="street-footer-row">
-                    <span className="corridor-direction">
-                      <Navigation size={11} />
-                      {street.direction}
-                    </span>
-                    <span className="view-on-map-cta">
-                      <span>{isSelected ? 'Pinpoint on Map' : 'Locate on Map'}</span>
-                      <ChevronRight size={13} />
-                    </span>
-                  </div>
-                </div>
-              );
-            })
-          ) : (
-            <div className="empty-results-box">
-              <AlertTriangle size={24} color="#64748b" />
-              <h4>No corridors matching this filter</h4>
-              <p style={{ fontSize: 12 }}>
-                Select "All Corridors" to view full arterial police monitoring grid.
-              </p>
+          {/* Quick Police & Commuter Emergency Strip */}
+          <div className="telemetry-emergency-strip">
+            <span className="emergency-strip-heading">Emergency Hotlines:</span>
+            <div className="emergency-strip-links">
+              <a href="tel:112" className="emergency-link-btn" title="National Emergency Response">
+                <span>🚨 112</span>
+              </a>
+              <a href="tel:1033" className="emergency-link-btn" title="NHAI Highway Helpline">
+                <span>🛣️ 1033</span>
+              </a>
+              <a href="tel:1073" className="emergency-link-btn" title="Traffic Control Room">
+                <span>👮 1073</span>
+              </a>
             </div>
-          )}
+          </div>
         </div>
-      </div>
+      </aside>
 
-      {/* 50km Heavy Traffic Alerts & PWA Push Modal */}
+      {/* RIGHT / MAP DISPLAY PANEL */}
+      <main className="map-display-panel">
+        <GoogleMapView
+          city={city}
+          streets={streets}
+          selectedStreet={selectedStreet}
+          apiKey={apiKey}
+          theme={theme}
+        />
+      </main>
+
+      {/* 50km Radar Alerts Modal */}
       <TrafficAlertModal
         isOpen={isAlertModalOpen}
         onClose={() => setIsAlertModalOpen(false)}
         cityName={city.name}
         heavyStreets={heavyStreetsUnder50}
-        onSelectStreet={(street) => setSelectedStreet(street)}
+        onSelectStreet={(street) => {
+          setSelectedStreet(street);
+          setIsAlertModalOpen(false);
+        }}
       />
     </div>
   );
 }
-

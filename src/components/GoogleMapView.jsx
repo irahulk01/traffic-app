@@ -8,10 +8,11 @@ import {
   ShieldCheck,
   AlertOctagon,
   Radio,
+  Sun,
+  Moon,
 } from 'lucide-react';
 
-
-// Sleek dark-mode styling for Google Maps
+// Tactical Dark Mode Styling for Google Maps (Night Command)
 const GOOGLE_MAPS_DARK_STYLE = [
   { elementType: 'geometry', stylers: [{ color: '#181e2e' }] },
   { elementType: 'labels.text.stroke', stylers: [{ color: '#181e2e' }] },
@@ -58,6 +59,53 @@ const GOOGLE_MAPS_DARK_STYLE = [
   },
 ];
 
+// High-Contrast Daylight Styling for Google Maps (Patrol Field Visibility)
+const GOOGLE_MAPS_DAY_STYLE = [
+  { elementType: 'geometry', stylers: [{ color: '#f8fafc' }] },
+  { elementType: 'labels.text.stroke', stylers: [{ color: '#ffffff' }, { weight: 3 }] },
+  { elementType: 'labels.text.fill', stylers: [{ color: '#1e293b' }] },
+  {
+    featureType: 'administrative',
+    elementType: 'labels.text.fill',
+    stylers: [{ color: '#0f172a' }],
+  },
+  {
+    featureType: 'poi',
+    elementType: 'labels.text.fill',
+    stylers: [{ color: '#475569' }],
+  },
+  {
+    featureType: 'road',
+    elementType: 'geometry',
+    stylers: [{ color: '#ffffff' }],
+  },
+  {
+    featureType: 'road',
+    elementType: 'geometry.stroke',
+    stylers: [{ color: '#cbd5e1' }],
+  },
+  {
+    featureType: 'road.highway',
+    elementType: 'geometry',
+    stylers: [{ color: '#fed7aa' }],
+  },
+  {
+    featureType: 'road.highway',
+    elementType: 'geometry.stroke',
+    stylers: [{ color: '#f97316' }],
+  },
+  {
+    featureType: 'water',
+    elementType: 'geometry',
+    stylers: [{ color: '#bae6fd' }],
+  },
+  {
+    featureType: 'water',
+    elementType: 'labels.text.fill',
+    stylers: [{ color: '#0284c7' }],
+  },
+];
+
 // Helper to reliably load Google Maps script
 function loadGoogleMaps(apiKey) {
   if (window.google && window.google.maps) {
@@ -69,7 +117,6 @@ function loadGoogleMaps(apiKey) {
   }
 
   window.__gmapLoadingPromise = new Promise((resolve, reject) => {
-    // Check if script element already exists
     const existing = document.getElementById('google-maps-script');
     if (existing) {
       existing.remove();
@@ -100,7 +147,9 @@ export default function GoogleMapView({
   streets = [],
   selectedStreet,
   apiKey,
+  theme = 'night',
 }) {
+
 
   const mapContainerRef = useRef(null);
   const [mapEngine, setMapEngine] = useState('loading'); // 'google' | 'leaflet' | 'loading'
@@ -155,23 +204,25 @@ export default function GoogleMapView({
           // Clear any previous child nodes
           mapContainerRef.current.innerHTML = '';
 
+          const activeStyles = theme === 'day' ? GOOGLE_MAPS_DAY_STYLE : GOOGLE_MAPS_DARK_STYLE;
+
           const map = new google.maps.Map(mapContainerRef.current, {
             center,
             zoom: 13,
             disableDefaultUI: true,
             zoomControl: false,
             mapTypeId: mapType,
-            styles: mapType === 'roadmap' ? GOOGLE_MAPS_DARK_STYLE : [],
+            styles: mapType === 'roadmap' ? activeStyles : [],
           });
 
           gMapRef.current = map;
 
           // Render 50km Surveillance Perimeter Radar Ring
           const circle = new google.maps.Circle({
-            strokeColor: '#3b82f6',
+            strokeColor: theme === 'day' ? '#1d4ed8' : '#38bdf8',
             strokeOpacity: 0.8,
             strokeWeight: 1.5,
-            fillColor: '#3b82f6',
+            fillColor: theme === 'day' ? '#2563eb' : '#38bdf8',
             fillOpacity: 0.04,
             map,
             center,
@@ -209,6 +260,18 @@ export default function GoogleMapView({
       }
     };
   }, [city.lat, city.lng, apiKey]);
+
+  // Dynamically update Google Map styles when theme or mapType changes
+  useEffect(() => {
+    if (gMapRef.current && window.google) {
+      const activeStyles = theme === 'day' ? GOOGLE_MAPS_DAY_STYLE : GOOGLE_MAPS_DARK_STYLE;
+      gMapRef.current.setOptions({
+        styles: mapType === 'roadmap' ? activeStyles : [],
+        mapTypeId: mapType,
+      });
+    }
+  }, [theme, mapType]);
+
 
   // Clean Leaflet fallback using official OpenStreetMap (No watermarks)
   const initCleanLeafletMap = (center) => {
@@ -411,14 +474,14 @@ export default function GoogleMapView({
       {/* Police Jurisdiction & Engine Status Tag */}
       <div className="map-city-tag">
         <div className="live-pulse-dot" />
-        <span style={{ fontWeight: 700 }}>{city.name}</span>
+        <span style={{ fontWeight: 700, color: '#ffffff' }}>{city.name} Division</span>
         <span
           style={{
             fontSize: 10,
-            padding: '2px 7px',
+            padding: '2px 8px',
             borderRadius: 12,
             background:
-              mapEngine === 'google' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(234, 179, 8, 0.2)',
+              mapEngine === 'google' ? 'rgba(34, 197, 94, 0.25)' : 'rgba(234, 179, 8, 0.25)',
             color: mapEngine === 'google' ? '#4ade80' : '#facc15',
             fontWeight: 700,
             display: 'flex',
@@ -427,16 +490,16 @@ export default function GoogleMapView({
           }}
         >
           <Radio size={10} />
-          {mapEngine === 'google' ? 'Google Live Traffic' : 'Live Vector Traffic'}
+          {mapEngine === 'google' ? 'Live Google Traffic' : 'Live Vector Traffic'}
         </span>
 
         <span
           style={{
             fontSize: 10,
-            padding: '2px 7px',
+            padding: '2px 8px',
             borderRadius: 12,
-            background: 'rgba(59, 130, 246, 0.2)',
-            color: '#60a5fa',
+            background: 'rgba(56, 189, 248, 0.2)',
+            color: '#38bdf8',
             fontWeight: 700,
             display: 'flex',
             alignItems: 'center',
@@ -444,7 +507,7 @@ export default function GoogleMapView({
           }}
         >
           <Crosshair size={10} />
-          50km Radius
+          50 km Radar Radius
         </span>
 
 
