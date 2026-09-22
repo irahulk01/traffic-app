@@ -61,11 +61,13 @@ export function searchIndianCities(query, limit = 35) {
   return combined;
 }
 
-// Popular / Spotlight Indian Cities including Hazaribagh & Giridih
+// Popular / Spotlight Indian Cities including Hazaribagh, Giridih, Ranchi, Jamshedpur, and Dhanbad
 export const SPOTLIGHT_CITIES = [
   { name: 'Hazaribagh', state: 'Jharkhand', stateCode: 'JH', lat: 23.9924, lng: 85.3616 },
   { name: 'Giridih', state: 'Jharkhand', stateCode: 'JH', lat: 24.2500, lng: 85.9167 },
   { name: 'Ranchi', state: 'Jharkhand', stateCode: 'JH', lat: 23.3432, lng: 85.3094 },
+  { name: 'Jamshedpur', state: 'Jharkhand', stateCode: 'JH', lat: 22.8046, lng: 86.2029 },
+  { name: 'Dhanbad', state: 'Jharkhand', stateCode: 'JH', lat: 23.7957, lng: 86.4304 },
   { name: 'Patna', state: 'Bihar', stateCode: 'BR', lat: 25.5941, lng: 85.1376 },
   { name: 'Delhi', state: 'Delhi', stateCode: 'DL', lat: 28.6139, lng: 77.2090 },
   { name: 'Bengaluru', state: 'Karnataka', stateCode: 'KA', lat: 12.9716, lng: 77.5946 },

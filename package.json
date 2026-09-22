@@ -11,12 +11,15 @@
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^2.1.1",
+    "@reduxjs/toolkit": "^2.12.0",
+    "@tanstack/react-query": "^5.103.2",
     "country-state-city": "^3.2.1",
     "fuse.js": "^7.5.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.47.0",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "react-redux": "^9.3.0"
   },
   "devDependencies": {
     "@types/react": "^19.2.18",
