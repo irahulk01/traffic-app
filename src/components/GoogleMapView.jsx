@@ -20,7 +20,7 @@ function loadGoogleMaps(apiKey) {
   window.__gmapLoadingPromise = new Promise((resolve, reject) => {
     const script = document.createElement('script');
     script.id = 'google-maps-script';
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=marker&loading=async&callback=__onGoogleMapsCallback`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=marker,places,geometry&loading=async&callback=__onGoogleMapsCallback`;
     script.async = true;
     script.defer = true;
 
@@ -39,7 +39,46 @@ function loadGoogleMaps(apiKey) {
   return window.__gmapLoadingPromise;
 }
 
-// ─── Component ───────────────────────────────────────────────────────────────
+// ── Fixed Hazaribagh Road Network Configuration ──────────────────────────────
+// Define important traffic corridors originating from or passing through Hazaribagh.
+const HAZARIBAGH_MONITORED_ROUTES = [
+  {
+    id: 'nh20-north',
+    name: 'NH20 (Towards Barhi)',
+    origin: { lat: 23.9966, lng: 85.3691 },
+    dest: { lat: 24.1612, lng: 85.3900 }
+  },
+  {
+    id: 'nh20-south',
+    name: 'NH20 (Towards Ranchi)',
+    origin: { lat: 23.9966, lng: 85.3691 },
+    dest: { lat: 23.8340, lng: 85.4200 }
+  },
+  {
+    id: 'nh100-east',
+    name: 'NH100 (Towards Bagodar)',
+    origin: { lat: 23.9966, lng: 85.3691 },
+    dest: { lat: 24.0040, lng: 85.5500 }
+  },
+  {
+    id: 'nh100-west',
+    name: 'NH100 (Towards Chatra)',
+    origin: { lat: 23.9966, lng: 85.3691 },
+    dest: { lat: 24.0450, lng: 85.1800 }
+  },
+  {
+    id: 'hazaribagh-bypass',
+    name: 'Hazaribagh Bypass',
+    origin: { lat: 23.9510, lng: 85.3690 },
+    dest: { lat: 24.0150, lng: 85.3350 }
+  }
+];
+
+// Auto-refresh interval — 60 seconds.
+const TRAFFIC_REFRESH_INTERVAL_MS = 60 * 1000;
+// Cache TTL — same as refresh interval so cache is always fresh when refresh fires.
+const CACHE_TTL_MS = TRAFFIC_REFRESH_INTERVAL_MS;
+
 export default function GoogleMapView({
   city,
   streets = [],
@@ -49,6 +88,7 @@ export default function GoogleMapView({
   // Callbacks — called once with result, no polling
   onGpsLocality,      // ({ locality, sublocality, fullAddress }) => void
   onRealTrafficData,  // (Map<corridorId, { level, durationRatio }>) => void
+  onGpsError,
 }) {
   const mapContainerRef = useRef(null);
   const [mapEngine, setMapEngine] = useState('loading'); // 'google' | 'leaflet' | 'loading'
@@ -69,10 +109,20 @@ export default function GoogleMapView({
   const lMarkerRef = useRef(null);
   const lUserLocationMarkerRef = useRef(null);
 
-  // User's exact GPS coordinates (defaults to city center)
+  // The city selected on the landing page — used as the traffic monitoring CENTER.
+  const cityLat = Number(city.lat);
+  const cityLng = Number(city.lng);
+  const hasValidCity = cityLat !== 0 && cityLng !== 0 && !isNaN(cityLat) && !isNaN(cityLng);
+
+  const [cityCenter, setCityCenter] = useState(() => ({
+    lat: hasValidCity ? cityLat : 0,
+    lng: hasValidCity ? cityLng : 0,
+  }));
+
+  // User's live GPS coordinates — used for the blue "you are here" pin.
   const [userCoords, setUserCoords] = useState(() => ({
-    lat: Number(city.lat) || 23.3432,
-    lng: Number(city.lng) || 85.3094,
+    lat: hasValidCity ? cityLat : 23.3432,
+    lng: hasValidCity ? cityLng : 85.3094,
   }));
 
   // ── Detect live GPS for the blue pin (once per session) ───────────────────
@@ -84,18 +134,21 @@ export default function GoogleMapView({
           const lng = pos.coords.longitude;
           setUserCoords({ lat, lng });
 
-          // ── Reverse geocode the GPS position to get the real locality name ──
-          // One call, only fires when GPS resolves, result is passed up via
-          // onGpsLocality callback and cached in Redux.
+          // Always use Hazaribagh center for routing, GPS is just a blue pin.
+          // We do not change cityCenter based on GPS anymore.
+
+          // Reverse geocode the GPS position to get the real locality name.
           if (onGpsLocality && window.google && window.google.maps) {
             reverseGeocodeCoords(lat, lng);
           } else if (onGpsLocality) {
-            // Google Maps may not be loaded yet — store coords, geocode after map loads
             pendingGeocodeCoordsRef.current = { lat, lng };
           }
         },
         (err) => {
           console.warn('GPS unavailable, using city center for location pin:', err);
+          if (!hasValidCity && onGpsError) {
+             onGpsError();
+          }
         },
         { enableHighAccuracy: true, timeout: 6000, maximumAge: 300000 },
       );
@@ -344,129 +397,309 @@ export default function GoogleMapView({
     }
   }, [streets, mapEngine, drawStreetsOnLeaflet]);
 
-  // ── Real traffic data via Google Maps DirectionsService ──────────────────
-  // After the map and streets are ready, we route through all corridor waypoints
-  // with departureTime=now to get duration_in_traffic vs duration.
-  // This gives us real congestion ratios to update the corridor card levels.
-  //
-  // Rules:
-  //  - Only runs on Google Maps engine (not Leaflet fallback)
-  //  - Batches corridors into groups of 8 waypoints per Directions request
-  //  - Caches result per city for 10 minutes to avoid repeat calls
-  //  - Only calls onRealTrafficData callback once (no polling)
-  const realTrafficCacheRef = useRef({}); // { [cacheKey]: { timestamp, data } }
+  // ── Dynamic Traffic Discovery via Routes API ──────────────────────────────
+  // Queries 8 compass directions from the user's location.
+  // Uses Routes API v2 to get speedReadingIntervals for accurate traffic locations.
+  // Groups nearby affected segments.
+  const realTrafficCacheRef = useRef({});
+  const geocodeCacheRef = useRef({}); // Cache reverse geocoding results
+
+  // Helper to safely format coordinate
+  const formatCoord = (c) => Math.round(c * 1000) / 1000;
 
   useEffect(() => {
-    if (
-      mapEngine !== 'google' ||
-      !gMapRef.current ||
-      !window.google ||
-      !onRealTrafficData ||
-      streets.length === 0
-    ) return;
+    if (mapEngine !== 'google' || !gMapRef.current || !window.google || !onRealTrafficData) return;
 
-    const cityKey = `${city.lat}_${city.lng}`;
-    const CACHE_TTL = 10 * 60 * 1000;
-    const now = Date.now();
-    const cached = realTrafficCacheRef.current[cityKey];
+    const lat = cityCenter.lat;
+    const lng = cityCenter.lng;
 
-    // Return cached result if fresh
-    if (cached && now - cached.timestamp < CACHE_TTL) {
-      onRealTrafficData(cached.data);
-      return;
-    }
+    if (lat === 0 && lng === 0) return;
+    if (!isFinite(lat) || !isFinite(lng)) return;
 
-    // Build array of corridors that have a valid path
-    const validCorridors = streets.filter(
-      (s) => s.path && s.path.length >= 2,
-    );
-    if (validCorridors.length === 0) return;
+    const cityKey = `${formatCoord(lat)}_${formatCoord(lng)}`;
+    console.log('[TrafficDiscovery] Starting Routes API fetch from', lat, lng);
 
-    const directionsService = new window.google.maps.DirectionsService();
-    const trafficMap = {}; // { corridorId: { level, durationRatio, realSpeed } }
+    let isCancelled = false;
 
-    // Batch corridors into groups of max 8 waypoints per request
-    // (DirectionsService limit: 1 origin + 8 waypoints + 1 destination = 10 stops)
-    const BATCH_SIZE = 8;
-    const batches = [];
-    for (let i = 0; i < validCorridors.length; i += BATCH_SIZE) {
-      batches.push(validCorridors.slice(i, i + BATCH_SIZE));
-    }
+    const fetchTrafficData = async () => {
+      const now = Date.now();
+      const cached = realTrafficCacheRef.current[cityKey];
+      if (cached && now - cached.timestamp < CACHE_TTL_MS) {
+        console.log('[TrafficDiscovery] Serving from cache:', Object.keys(cached.trafficMap).length, 'areas');
+        onRealTrafficData(cached.trafficMap, cached.streets);
+        return;
+      }
 
-    let completed = 0;
+      const google = window.google;
+      
+      // We will collect all dynamically discovered traffic areas here
+      let discoveredStreetsMap = {};
+      let trafficDataMap = {};
+      let failedRoutes = new Set();
+      
+      const routes = HAZARIBAGH_MONITORED_ROUTES;
 
-    batches.forEach((batch) => {
-      if (batch.length === 0) return;
-
-      // For each batch: origin = first corridor start, destination = last corridor end,
-      // waypoints = all corridor midpoints in between
-      const origin = batch[0].path[0];
-      const destination = batch[batch.length - 1].path[batch[batch.length - 1].path.length - 1];
-      const waypoints = batch.slice(0, -1).map((s) => ({
-        location: new window.google.maps.LatLng(
-          s.coordinates.lat,
-          s.coordinates.lng,
-        ),
-        stopover: false,
+      // Start with placeholder while fetching
+      const placeholderStreets = routes.map((r) => ({
+        id: r.id,
+        name: `Scanning ${r.name}...`,
+        landmark: 'Hazaribagh Road Network',
+        direction: r.name,
+        coordinates: r.origin,
+        path: [r.origin, r.dest],
       }));
-
-      directionsService.route(
-        {
-          origin: new window.google.maps.LatLng(origin.lat, origin.lng),
-          destination: new window.google.maps.LatLng(destination.lat, destination.lng),
-          waypoints,
-          travelMode: window.google.maps.TravelMode.DRIVING,
-          drivingOptions: {
-            departureTime: new Date(), // Get real-time traffic
-            trafficModel: window.google.maps.TrafficModel.BEST_GUESS,
-          },
-        },
-        (result, status) => {
-          if (status === 'OK' && result?.routes?.[0]?.legs) {
-            const legs = result.routes[0].legs;
-
-            legs.forEach((leg, idx) => {
-              const corridor = batch[idx];
-              if (!corridor) return;
-
-              const normalSecs = leg.duration?.value || 0;
-              const trafficSecs = leg.duration_in_traffic?.value || normalSecs;
-
-              // Congestion ratio: 1.0 = free flow, 2.0 = twice as long
-              const ratio = normalSecs > 0 ? trafficSecs / normalSecs : 1;
-
-              let realLevel = corridor.level; // fallback to static
-              if (ratio >= 1.8) realLevel = 'heavy';
-              else if (ratio >= 1.3) realLevel = 'moderate';
-              else if (ratio >= 1.1) realLevel = 'low';
-              else realLevel = 'none';
-
-              // Estimate real speed from traffic duration and distance
-              const distanceM = leg.distance?.value || 0;
-              const realSpeedKmh = trafficSecs > 0
-                ? Math.round((distanceM / 1000) / (trafficSecs / 3600))
-                : corridor.speed;
-
-              trafficMap[corridor.id] = {
-                level: realLevel,
-                durationRatio: Math.round(ratio * 100) / 100,
-                realSpeed: Math.max(5, realSpeedKmh),
-                normalDuration: leg.duration?.text || '',
-                trafficDuration: leg.duration_in_traffic?.text || '',
-              };
-            });
-          }
-
-          completed += 1;
-          if (completed === batches.length) {
-            // All batches done — cache and propagate
-            realTrafficCacheRef.current[cityKey] = { timestamp: Date.now(), data: trafficMap };
-            onRealTrafficData(trafficMap);
-          }
-        },
+      const placeholderTraffic = Object.fromEntries(
+        routes.map((r) => [r.id, { level: 'checking', realSpeed: 0, normalDuration: '', trafficDuration: '' }])
       );
-    });
-  }, [mapEngine, streets, city.lat, city.lng, onRealTrafficData]); // eslint-disable-line react-hooks/exhaustive-deps
+      onRealTrafficData(placeholderTraffic, placeholderStreets);
+
+      console.log('[TrafficDiscovery] Querying', routes.length, 'routes via Routes API...');
+
+      const apiKeyToUse = (apiKey || '').trim();
+      const routesApiUrl = 'https://routes.googleapis.com/directions/v2:computeRoutes';
+
+      const fetchPromises = routes.map(async (route) => {
+        try {
+          const payload = {
+            origin: { location: { latLng: { latitude: route.origin.lat, longitude: route.origin.lng } } },
+            destination: { location: { latLng: { latitude: route.dest.lat, longitude: route.dest.lng } } },
+            travelMode: 'DRIVE',
+            routingPreference: 'TRAFFIC_AWARE_OPTIMAL',
+            extraComputations: ['TRAFFIC_ON_POLYLINE']
+          };
+
+          const response = await fetch(routesApiUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Goog-Api-Key': apiKeyToUse,
+              'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline,routes.travelAdvisory,routes.legs'
+            },
+            body: JSON.stringify(payload)
+          });
+
+          if (!response.ok) {
+            throw new Error(`Routes API error: ${response.status}`);
+          }
+
+          const data = await response.json();
+          const apiRoute = data.routes?.[0];
+          
+          if (!apiRoute || !apiRoute.polyline || !apiRoute.polyline.encodedPolyline) {
+             return; // No route found
+          }
+
+          // Decode polyline to get coordinates
+          const polylineCoords = google.maps.geometry.encoding.decodePath(apiRoute.polyline.encodedPolyline);
+          const intervals = apiRoute.travelAdvisory?.speedReadingIntervals || [];
+          
+          // Group adjacent affected segments
+          // We only care about SLOW and TRAFFIC_JAM
+          const affectedIntervals = intervals.filter(i => i.speed === 'SLOW' || i.speed === 'TRAFFIC_JAM');
+          
+          if (affectedIntervals.length === 0) return;
+
+          // Sort by start index
+          affectedIntervals.sort((a, b) => a.startPolylinePointIndex - b.startPolylinePointIndex);
+          
+          let groupedAreas = [];
+          let currentGroup = null;
+          
+          const POINT_MERGE_THRESHOLD = 30; // Max points gap to merge intervals
+          
+          affectedIntervals.forEach((interval) => {
+             if (!currentGroup) {
+                currentGroup = {
+                   startIdx: interval.startPolylinePointIndex,
+                   endIdx: interval.endPolylinePointIndex,
+                   maxSeverity: interval.speed,
+                   intervals: [interval]
+                };
+             } else {
+                if (interval.startPolylinePointIndex - currentGroup.endIdx <= POINT_MERGE_THRESHOLD) {
+                   // Merge
+                   currentGroup.endIdx = Math.max(currentGroup.endIdx, interval.endPolylinePointIndex);
+                   if (interval.speed === 'TRAFFIC_JAM') currentGroup.maxSeverity = 'TRAFFIC_JAM';
+                   currentGroup.intervals.push(interval);
+                } else {
+                   // Close current group
+                   groupedAreas.push(currentGroup);
+                   currentGroup = {
+                      startIdx: interval.startPolylinePointIndex,
+                      endIdx: interval.endPolylinePointIndex,
+                      maxSeverity: interval.speed,
+                      intervals: [interval]
+                   };
+                }
+             }
+          });
+          if (currentGroup) groupedAreas.push(currentGroup);
+
+          // Process each grouped area into a street card
+          const geocoder = new google.maps.Geocoder();
+          
+          for (let i = 0; i < groupedAreas.length; i++) {
+             const area = groupedAreas[i];
+             const startIdx = Math.max(0, area.startIdx);
+             const endIdx = Math.min(polylineCoords.length - 1, area.endIdx);
+             
+             if (startIdx >= endIdx) continue;
+             
+             const pathPoints = [];
+             for (let j = startIdx; j <= endIdx; j++) {
+                pathPoints.push({
+                   lat: polylineCoords[j].lat(),
+                   lng: polylineCoords[j].lng()
+                });
+             }
+             
+             const midIdx = Math.floor((startIdx + endIdx) / 2);
+             const midPoint = polylineCoords[midIdx];
+             const centerCoord = { lat: midPoint.lat(), lng: midPoint.lng() };
+             
+             const areaId = `${route.id}-area-${i}-${startIdx}`;
+             
+             const displayLevel = area.maxSeverity === 'TRAFFIC_JAM' ? 'heavy' : 'moderate';
+             
+             // Base street info
+             const streetObj = {
+                id: areaId,
+                name: `Traffic near ${formatCoord(centerCoord.lat)}, ${formatCoord(centerCoord.lng)}`,
+                landmark: `Route: ${route.name}`,
+                direction: route.name,
+                coordinates: centerCoord,
+                path: pathPoints
+             };
+             
+             discoveredStreetsMap[areaId] = streetObj;
+             
+             trafficDataMap[areaId] = {
+                level: displayLevel,
+                durationRatio: displayLevel === 'heavy' ? 1.5 : 1.2,
+                realSpeed: displayLevel === 'heavy' ? 10 : 25,
+                normalDuration: '',
+                trafficDuration: 'Google Live Traffic',
+                intervalCount: endIdx - startIdx, // size of the traffic jam
+             };
+             
+             // Fire off reverse geocoding asynchronously to update the name
+             const geoKey = `${formatCoord(centerCoord.lat)}_${formatCoord(centerCoord.lng)}`;
+             if (geocodeCacheRef.current[geoKey]) {
+                streetObj.name = geocodeCacheRef.current[geoKey].name;
+                streetObj.landmark = geocodeCacheRef.current[geoKey].landmark;
+             } else {
+                geocoder.geocode({ location: centerCoord }, (results, status) => {
+                   if (status === 'OK' && results[0]) {
+                      let routeName = '';
+                      let locality = '';
+                      let poiName = '';
+
+                      for (const result of results) {
+                        for (const comp of result.address_components) {
+                          if (comp.types.includes('route') && !routeName) routeName = comp.long_name;
+                          if (comp.types.includes('point_of_interest') && !poiName) poiName = comp.long_name;
+                          if (comp.types.includes('locality') && !locality) locality = comp.long_name;
+                          if (comp.types.includes('premise') && !poiName) poiName = comp.long_name;
+                          if (comp.types.includes('neighborhood') && !locality) locality = comp.long_name;
+                        }
+                      }
+                      
+                      const formattedName = routeName || route.name;
+                      const formattedLandmark = poiName || locality || '';
+                      
+                      geocodeCacheRef.current[geoKey] = {
+                         name: formattedName,
+                         landmark: formattedLandmark
+                      };
+                      
+                      // We could force a re-render here, but since the traffic refreshes every 5 mins,
+                      // we can just mutate the object so the next map access sees it, OR we can dispatch an update.
+                      // For now, we update the object directly.
+                      streetObj.name = formattedName;
+                      if (formattedLandmark) streetObj.landmark = formattedLandmark;
+                      
+                      // Trigger a quick re-emit to update UI immediately
+                      if (!isCancelled) {
+                         const currentStreets = Object.values(discoveredStreetsMap).sort((a, b) => {
+                            const tA = trafficDataMap[a.id];
+                            const tB = trafficDataMap[b.id];
+                            if (!tA || !tB) return 0;
+                            if (tA.level === 'heavy' && tB.level !== 'heavy') return -1;
+                            if (tB.level === 'heavy' && tA.level !== 'heavy') return 1;
+                            return (tB.intervalCount || 0) - (tA.intervalCount || 0);
+                         });
+                         onRealTrafficData({...trafficDataMap}, currentStreets);
+                      }
+                   }
+                });
+             }
+          }
+          
+        } catch (err) {
+          console.warn(`[TrafficDiscovery] ${route.name} FAILED:`, err);
+          failedRoutes.add(route.id);
+        }
+      });
+
+      await Promise.all(fetchPromises);
+      
+      if (isCancelled) return;
+      
+      // Carry over stale data for failed routes
+      if (failedRoutes.size > 0 && cached) {
+         cached.streets.forEach(street => {
+            // Find which route this street belonged to. routeId is part of areaId: `${route.id}-area-...`
+            const routeId = street.id.split('-area-')[0];
+            if (failedRoutes.has(routeId) || failedRoutes.has(routeId + '-' + street.id.split('-area-')[0].split('-')[1])) { // quick hack to match route.id
+               // It's from a failed route, let's copy it over
+               discoveredStreetsMap[street.id] = street;
+               const oldTraffic = cached.trafficMap[street.id];
+               trafficDataMap[street.id] = {
+                  ...oldTraffic,
+                  isStale: true
+               };
+            }
+         });
+      }
+      
+      const finalStreets = Object.values(discoveredStreetsMap).sort((a, b) => {
+         const tA = trafficDataMap[a.id];
+         const tB = trafficDataMap[b.id];
+         if (!tA || !tB) return 0;
+         if (tA.level === 'heavy' && tB.level !== 'heavy') return -1;
+         if (tB.level === 'heavy' && tA.level !== 'heavy') return 1;
+         return (tB.intervalCount || 0) - (tA.intervalCount || 0);
+      });
+      console.log('[TrafficDiscovery] All done. Emitting', finalStreets.length, 'traffic areas.');
+      
+      if (finalStreets.length === 0) {
+        // If NO traffic is found, we should clear the checking state, but not invent traffic.
+        // Returning an empty array is the correct representation.
+        onRealTrafficData({}, []);
+        realTrafficCacheRef.current[cityKey] = {
+           timestamp: Date.now(),
+           trafficMap: {},
+           streets: []
+        };
+      } else {
+        realTrafficCacheRef.current[cityKey] = {
+          timestamp: Date.now(),
+          trafficMap: trafficDataMap,
+          streets: finalStreets,
+        };
+        onRealTrafficData(trafficDataMap, finalStreets);
+      }
+    };
+
+    fetchTrafficData();
+
+    const refreshTimer = setInterval(fetchTrafficData, TRAFFIC_REFRESH_INTERVAL_MS);
+
+    return () => {
+      isCancelled = true;
+      clearInterval(refreshTimer);
+    };
+  }, [mapEngine, cityCenter.lat, cityCenter.lng, onRealTrafficData]);
 
   // ── Blue user location pin — Leaflet ─────────────────────────────────────
   const drawUserLocationOnLeaflet = (map, coords) => {

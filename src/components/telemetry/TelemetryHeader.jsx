@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, RotateCw, Navigation } from 'lucide-react';
+import { ArrowLeft, RotateCw, Navigation, Sun, Moon } from 'lucide-react';
 import NotificationBell from '../common/NotificationBell';
 
 export default function TelemetryHeader({
@@ -11,6 +11,8 @@ export default function TelemetryHeader({
   onManualRefresh,
   // GPS-resolved locality (from reverse geocoding of the blue dot)
   gpsLocality = null,
+  theme,
+  onToggleTheme,
 }) {
   // If GPS locality is resolved and different from the selected city, show it as
   // "📍 You are in [locality]" below the selected city name
@@ -33,36 +35,30 @@ export default function TelemetryHeader({
         </button>
 
         <div className="telemetry-title-group">
-          <h1 className="city-display-name" title={city.name}>
-            {city.name}
+          <h1 className="city-display-name" title="Hazaribagh Traffic Monitor">
+            HAZARIBAGH TRAFFIC MONITOR
           </h1>
-
-          {/* State label */}
-          {city.state && (
-            <div className="city-meta-row">
-              <span className="city-state-text">{city.state}</span>
-            </div>
-          )}
-
-          {/* GPS blue-dot locality — shown when resolved & different from selected city */}
-          {showGpsLocality && (
-            <div
-              className="city-meta-row gps-locality-row"
-              title={gpsLocality.fullAddress || gpsLocality.locality}
-            >
-              <Navigation size={10} style={{ color: '#2563eb', flexShrink: 0 }} />
-              <span className="gps-locality-label">
-                You are in {gpsLocality.sublocality
-                  ? `${gpsLocality.sublocality}, `
-                  : ''}
-                {gpsLocality.locality}
-              </span>
-            </div>
-          )}
+          <div className="city-meta-row">
+            <span className="city-state-text" style={{ color: '#ef4444', fontWeight: 'bold' }}>LIVE</span>
+            <span style={{ marginLeft: 8, color: '#94a3b8' }}>Google Traffic</span>
+          </div>
         </div>
       </div>
 
-      <div className="telemetry-header-actions">
+      <div className="telemetry-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        {/* Theme Toggle */}
+        {onToggleTheme && (
+          <button
+            type="button"
+            className="header-action-btn"
+            onClick={onToggleTheme}
+            title={`Switch to ${theme === 'day' ? 'Dark' : 'Light'} Mode`}
+            aria-label="Toggle Theme"
+          >
+            {theme === 'day' ? <Moon size={16} /> : <Sun size={16} />}
+          </button>
+        )}
+
         {/* Manual Reload Trigger */}
         {onManualRefresh && (
           <button

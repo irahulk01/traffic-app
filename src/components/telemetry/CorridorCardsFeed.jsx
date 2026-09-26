@@ -6,13 +6,14 @@ export default function CorridorCardsFeed({
   streets = [],
   selectedStreet,
   onSelectStreet,
+  updatedTime,
 }) {
   if (streets.length === 0) {
     return (
       <div className="corridors-empty-state">
         <AlertTriangle size={28} className="empty-state-icon" />
-        <h4>No corridors found under this filter</h4>
-        <p>Select "All Roads" to view the full city traffic grid.</p>
+        <h4>No significant traffic detected.</h4>
+        <p>All monitored routes are operating normally.</p>
       </div>
     );
   }
@@ -25,6 +26,7 @@ export default function CorridorCardsFeed({
           street={street}
           isSelected={selectedStreet?.id === street.id}
           onSelect={onSelectStreet}
+          updatedTime={updatedTime}
         />
       ))}
     </div>

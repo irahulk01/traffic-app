@@ -1,0 +1,1154 @@
+{
+  "routes": [
+    {
+      "legs": [
+        {
+          "distanceMeters": 63708,
+          "duration": "8564s",
+          "staticDuration": "7092s",
+          "polyline": {
+            "encodedPolyline": "oknmCs~tgOk@d@EAi@oAEQ^ODG@I?u@t@aI`@@DOImDBk@LMHARBZMj@@pAHf@mK^wEpATjEr@FAFQDo@jBkLx@mFeCg@g@YOWEe@Du@b@aDJgAKIAEoCYKH_@Ce@Iy@a@]Wg@y@s@m@SMcAc@e@_@IQU?YK]QuEw@_B?oALaAPcBNy@PuAh@cATu@DiEN}@TULW`@yAvDy@tBABS^uBxFUbAC`@@`AJzC@bBHvAJ~AW@{EeAe@dAkAfBq@n@yB|AeF~DaCnBkG~EmB~Aa@Tw@DsA?AzSCbB]BOQ_@OqFiBsHiCuAc@gPgG_Cu@i@@o@Jg@T{@VuBfAi@FcAGe@KkAi@gE}BaIgDcCwAi@WeJkDqD_AkA[iAUkEa@aBY_AOoA_@_Am@}E{D_@Sg@YMGoAY_BSa@KcDrBaClAWBmBGgDM{BEcC@gEWq@?{@JwG~AmHpBs@R}@ToCv@oATgBJcA?{CKmDKgCSuBEaA@K?gCIsAKmC]uAWCA]I{@G}FK_FOe@AyB?mADwA?uBM{BW{@EiBFqCPcBCEA_AGsEq@kAUE?qAOi@Mo@SaBw@cAa@g@EcAHoB\\eHKwFWuG[q@KyD_@{Gs@sCYEA{Ge@oHg@{@E}Fa@q@M_FeByB_@i@A[F_@Te@l@}B`D]Zg@PSFg@@cISaBJcARqFzAeB`@{ErAkE~@gIbBkATE?sFn@wD`@iET{QjAoBHkBPyCNwEZkId@gDH}CBsAM}E_AwEcAwASwDYyH_@iAFm@Lw@`@cAx@oBhBg@Zw@LcAF_C@eFWyc@uB{Zu@w@?oJRwL`@_BLs@J[LwAx@eC`BmAt@cHbFqBvA{B`AmItCeCdAaGtBiSfHiA`@eAf@{CnAyBhAaFxCo@XaBf@}Bf@cALsAFs^JoFTeG`@gYlC_BLcG~@{B`@}J`C_HjBqFrAeN~CeAV{Al@wCrA_CjAcHxCmG|BkAb@_@H]BcCo@yBs@uCw@_AAsBDgDZsDL_BTeEHqCB_ALaFx@MAiJfD_@Aa@O_@Ku@BwAXg@CuAUsA@s@Ow@Yc@EeBDqAYuCKuC_@mBg@Y@OHIHSd@Mh@S^mArA_Al@k@Tg@l@c@r@eAj@WDQAi@WeA}@_@Oa@K_@BKHa@r@s@n@a@ZGNGr@G`AGRMTc@h@wAnAk@To@TSJu@l@KLEV@TFN^R^NFF?J[r@GD]?gBkASOoByCQ[Gg@?q@G_@q@y@CGEqAIWOKMEO?iDt@a@N}@fAYVwAb@[Dk@Ca@GOASB}@h@WVELAn@BR?RL~@Ej@EPILWRe@Ns@FSEIGGQGwBGwBAK?w@Oc@OQc@c@m@UwJaBk@Mg@WUc@u@eCk@uCu@_CWa@q@_@wDsAk@KiBGwA]cEwByDuB}BqA_@IeAAoMb@c@EmEcAcFs@OIKU_@eD[mCEO[YuBmAyBqAGCIQIaACc@Wi@e@k@s@o@_@UaCw@qBm@m@CoBd@gAZONGRq@xI?`A\\`E?t@[tDMn@KP_@RiGlBO@SC{@g@gCeB_Ao@WGS@GLATBPl@~A@VQr@KPaA|@i@v@MTENAt@P`CA`@GT_@|@Kr@Av@BVFRZ\\t@p@FJ@NGXMNw@b@Y^q@fAa@TaDf@_I`A[JSLOP_GdJa@\\e@Lm@@mAGYNYZm@hAqBpEiB|CITEd@DbCA\\Gh@Sx@MXW\\gBbBQh@Ep@?l@MbCK`AAl@Jh@X`@\\l@JVAj@Od@Yt@[h@_@h@c@nAUxAMv@Ex@FjDFdATjBD~@ObLIhDA`CHhIGnD?rCAb@KJWBKKEQ?o@ZyD@aAGWSGK?QLCLF~@Bl@Y`DA`@Jd@`@r@ZLp@RRR@BCTKRIDQ?KC_@Si@m@S]_@qAKi@AWHaAC]GKUCSBEDCP?VDV@ZLz@Tp@PVJ`@?JIPKDI?QKIQM}@]{BI[GGOCQBCDEXd@dANr@Bd@T|@A\\EDOBI?IGG[BkAKc@EOMMOKWGm@EsBy@eBy@UCa@DUVQrBLl@Zn@TV\\DLA|A}@b@KPAh@DVNFTCb@GRC\\@Z^|At@|@h@`@NVBNGRKDY?g@Q}@c@UW_Ao@YGuDQgAMU?WD_@TYZ[NWA}@m@_@[Ua@{@eBQQWG{@?sGNcAEW?y@QmBIe@?o@TIJWPc@^[j@Qj@uA|F[t@uAhCa@b@k@ViEdAaDv@oB`@{C^cABkKcAaAS_@K]QiA}@yJ_Ms@o@e@U]Km@AmCNo@Gm@MeBc@aBa@c@[WYGK{CmIuDkKq@{BE]?[DU^qAFi@Ce@Ow@]{@}@kDQe@W]mA_Ag@Um@CYJUPWj@]pA]`AMP]RUB_@AuDYe@@YFm@VqBrAkB|AkCnCo@d@aAlAOZWRSJc@DQAu@UgN_G[Uu@aASY{CoGI]e@c@y@e@c@OUGuKq@uQ}@sACo@Fg@JaBl@c@Rm@NaBp@e@NSJaAZWV_ANkACg@CwBc@aDi@mC[gCYy@AoAF_Fd@Y@w@HoAOeG^{Kt@kBVsNhDoGdBkE~@c@Fm@\\o@HyC@_AAeB[s@OwAg@y@]aAk@mByAg@e@uFiEgIyGcEoDwCsC}DoEsA_B[UeHcIiBoBqBcCa@YiC}C[g@uCoHi@iAe@o@qAsAoB_BqAaB_AqAeEwF{DuFoJsPiOsW{GgLa@o@aImNyEoH{BaD_FwHg@w@?WHSZ]NYZa@NYH[Ee@EKR{AF}@D_CEKKCLuAF{CAa@KoACuBMiASwAs@uD}@cD]}@mDkHcCkF_CqEaCcFi@uAmAgCs@oAuBgEgCaFOg@@YLq@_@@o@Nu@ZMBi@mASu@MSkAk@u@Q[?o@RcBz@eAr@{Af@aCgGSmAAuBCe@Uq@]c@YWa@UuAk@{@q@{CcDWKiAIwA?m@Bs@NqBx@qD`B_Ct@{DdAaA^[ZiA|By@jAURE@KCPw@J_AAk@KQg@o@aAgAkAs@kAgAGLS\\e@vAeCbPiDrXGx@c@bBc@nE_@vCm@pDQpCKl@[pAa@`A_@^WPKNGZa@pE_BzEs@hASRcAZgAHkA@a@@sAd@cAX_CdAcA\\_Br@{@z@}@rAm@n@cA~AYj@o@v@yGhEoEtBsA`@mBA}@G_AFy@NqCv@iA`@OPg@JY@OHW^_FzCw@`@s@ZmCv@ULc@h@o@rA_AvAcAnBqAhBoBfCcBjBeA~@[CgELYAe@KmAa@_@Em@AgBH}@AsBV}CLgFFeAFa@?WGwAi@eAg@SUKSOg@c@}@Y[c@W]IwCeAeCoAcBe@{@_@c@YiA{@iDmBuBeBcEcC_FmCsAk@{Ay@sAw@gE_Dc@OiB[cAe@_C_BiAU_AOuAMgC_AkAM}KeCyBk@cBg@o@MWCi@Fo@Z{@r@QXAZFZVr@DX?VGVQJkAH}@A{BKm@?YHSNgD~D_@l@G\\HZr@~@vAlALTj@hCBh@^jBV`ALdABhAEdAMh@KbA[dBS^q@x@aAx@_A`AkBxAuAD]T]l@WnCa@nAG|@BdCMv@]r@]Z_@Fq@?a@R}AfAYNYDiCLs@Fg@`@a@^Yp@[^[Ri@NqAReD|Bg@p@eAz@o@b@o@LO@_@GaAe@y@k@g@wAMOSIwCW_Bc@QScBmDg@c@YMc@AOXOtAWv@mBzC}@~@eA|@w@`@m@NcAFgDCQAUGM[YqBKmACmA@{FGMQC"
+          },
+          "startLocation": {
+            "latLng": {
+              "latitude": 23.344075999999998,
+              "longitude": 85.3093773
+            }
+          },
+          "endLocation": {
+            "latLng": {
+              "latitude": 23.7453124,
+              "longitude": 85.3019848
+            }
+          },
+          "steps": [
+            {
+              "distanceMeters": 93,
+              "staticDuration": "30s",
+              "polyline": {
+                "encodedPolyline": "oknmCs~tgOk@d@EAi@oAEQ"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.344075999999998,
+                  "longitude": 85.3093773
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.344573099999998,
+                  "longitude": 85.3096922
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "DEPART",
+                "instructions": "Argora Station Rdৰ পৰা উত্তৰ-পশ্চিমৰ দিশত আগবাঢ়ক\n(বাওঁফালে থকা)Anash Seat Covers Assoseriesৰ ওচৰেদি যাওক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "৯৩ মিঃ"
+                },
+                "staticDuration": {
+                  "text": "1 min"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 30,
+              "staticDuration": "13s",
+              "polyline": {
+                "encodedPolyline": "qnnmCq`ugO^ODG@I"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.344573099999998,
+                  "longitude": 85.3096922
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.344370899999998,
+                  "longitude": 85.30985799999999
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_RIGHT",
+                "instructions": "Janta Bike Service Centerত সোঁফালে ঘূৰক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "৩০ মিঃ"
+                },
+                "staticDuration": {
+                  "text": "1 min"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 195,
+              "staticDuration": "56s",
+              "polyline": {
+                "encodedPolyline": "imnmCsaugO?u@t@aI"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.344370899999998,
+                  "longitude": 85.30985799999999
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.344096699999998,
+                  "longitude": 85.31174469999999
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_SLIGHT_LEFT",
+                "instructions": "CORPORATE OFFICEৰ ওচৰত সামান্য বাওঁফালে"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "০.২ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "1 min"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 166,
+              "staticDuration": "51s",
+              "polyline": {
+                "encodedPolyline": "sknmCkmugO`@@DOImDBk@LMHAPB"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.344096699999998,
+                  "longitude": 85.31174469999999
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.343715,
+                  "longitude": 85.3129597
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_RIGHT",
+                "instructions": "Kath Pool Rdৰ দিশত Shree Shobha Grihৰ ওচৰত সোঁফালে ঘূৰক\n(সোঁফালে থকা)Filmox Studiosৰ ওচৰেদি যাওক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "০.২ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "1 min"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 89,
+              "staticDuration": "22s",
+              "polyline": {
+                "encodedPolyline": "ginmC_uugO\\Mj@@pAH"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.343715,
+                  "longitude": 85.3129597
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.342937199999998,
+                  "longitude": 85.31296859999999
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_SLIGHT_LEFT",
+                "instructions": "Kath Pool Rdলৈ যাবলৈ Jasoda Bhawan Girls PGৰ ওচৰত সামান্য বাওঁফালে"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "৮৯ মিঃ"
+                },
+                "staticDuration": {
+                  "text": "1 min"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 316,
+              "staticDuration": "72s",
+              "polyline": {
+                "encodedPolyline": "kdnmCauugOf@mK^wE"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.342937199999998,
+                  "longitude": 85.31296859999999
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.3425841,
+                  "longitude": 85.31603740000001
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_LEFT",
+                "instructions": "anilaxmi appartmentত বাওঁফালে ঘূৰক\n(বাওঁফালে থকা)Aishwarya Apartmentৰ ওচৰেদি যাওক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "০.৩ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "1 min"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 169,
+              "staticDuration": "54s",
+              "polyline": {
+                "encodedPolyline": "cbnmCghvgOpAThEr@HA"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.3425841,
+                  "longitude": 85.31603740000001
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.341105900000002,
+                  "longitude": 85.3156846
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_RIGHT",
+                "instructions": "AG More Rdৰ দিশত JMJ Schoolৰ ওচৰত সোঁফালে ঘূৰক\n(সোঁফালে থকা)THE L'OREALৰ ওচৰেদি যাওক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "০.২ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "1 min"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 386,
+              "staticDuration": "62s",
+              "polyline": {
+                "encodedPolyline": "}xmmC_fvgOFQDo@jBkLx@mF"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.341105900000002,
+                  "longitude": 85.3156846
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.3402067,
+                  "longitude": 85.3193373
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_LEFT",
+                "instructions": "AG More Rd পাবলৈ N office para chowkত বাওঁফালে ঘূৰক\n(বাওঁফালে থকা)SBM Toiletৰ ওচৰেদি যাওক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "০.৪ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "1 min"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 289,
+              "staticDuration": "43s",
+              "polyline": {
+                "encodedPolyline": "ismmC{|vgOeCg@g@YOWEe@Du@b@aDJgA"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.3402067,
+                  "longitude": 85.3193373
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.3409242,
+                  "longitude": 85.3214205
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_LEFT",
+                "instructions": "Doranda Main Rd পাবলৈ AG Moreত বাওঁফালে ঘূৰক\n(বাওঁফালে থকা)स बैग जोनৰ ওচৰেদি যাওক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "০.৩ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "1 min"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 92,
+              "staticDuration": "12s",
+              "polyline": {
+                "encodedPolyline": "wwmmC{iwgOKIAEoCY"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.3409242,
+                  "longitude": 85.3214205
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.341708099999998,
+                  "longitude": 85.3216286
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "ROUNDABOUT_LEFT",
+                "instructions": "Doranda Main Rdত থাকিবলৈ Vivekanand Chowkত প্ৰথমৰে প্ৰস্থান কৰক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "৯২ মিঃ"
+                },
+                "staticDuration": {
+                  "text": "1 min"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 274,
+              "staticDuration": "33s",
+              "polyline": {
+                "encodedPolyline": "u|mmCekwgOKH_@Ce@Iy@a@]Wg@y@s@m@SMcAc@e@_@IQ"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.341708099999998,
+                  "longitude": 85.3216286
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.343704199999998,
+                  "longitude": 85.322965
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_SLIGHT_LEFT",
+                "instructions": "Doranda Main Rdত গৈ থাকিবলৈ Office of the IG of Police, Ranchiৰ ওচৰত সামান্য বাওঁফালে\n(সোঁফালে থকা)Van Bhavanৰ ওচৰেদি যাওক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "০.৩ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "1 min"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 1357,
+              "staticDuration": "190s",
+              "polyline": {
+                "encodedPolyline": "cinmCoswgOU?YK]QuEw@_B?oALaAPcBNy@PuAh@cATu@DiEN}@TULW`@yAvDy@tBUb@uBxFUbAC`@@`AJzC@bBTvD"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.343704199999998,
+                  "longitude": 85.322965
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.3511302,
+                  "longitude": 85.3162991
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_LEFT",
+                "instructions": "Hasan Jafri Rd/Kadru Main Rd পাবলৈ Fisheries Deptt Officeত বাওঁফালে ঘূৰক\nKadru Main Rdতে গৈ থাকক\n(৯০০ মিঃত সোঁফালে থকা)Dr Lal's Hospital & Research Centreৰ ওচৰেদি যাওক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "১.৪ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "3 mins"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 140,
+              "staticDuration": "25s",
+              "polyline": {
+                "encodedPolyline": "qwomC{ivgOW@{EeA"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.3511302,
+                  "longitude": 85.3162991
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.352345099999997,
+                  "longitude": 85.3166352
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_RIGHT",
+                "instructions": "AG Colony Rd/Kadru - Kumhartoli Rdলৈ যাবলৈ Merina Tailorsৰ ওচৰত সোঁফালে ঘূৰক\n(বাওঁফালে থকা)Rajendra Management Groupৰ ওচৰেদি যাওক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "০.১ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "1 min"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 1240,
+              "staticDuration": "211s",
+              "polyline": {
+                "encodedPolyline": "e_pmC_lvgOe@dAkAfBq@n@yB|AeF~DaCnBkG~EmB~Aa@Tw@DsA?AzSCbB"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.352345099999997,
+                  "longitude": 85.3166352
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.3583745,
+                  "longitude": 85.3079631
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_LEFT",
+                "instructions": "AG Colony Rd/Kadru - Kumhartoli Rd/New AG Colony Rd পাবলৈ प्रकाश तम्बू हाउस और शुभम केटररত বাওঁফালে ঘূৰক\nKadru - Kumhartoli Rdতে গৈ থাকক\n(৮৫০ মিঃত সোঁফালে থকা)Sri Gems Jewellersৰ ওচৰেদি যাওক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "১.২ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "4 mins"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 2482,
+              "staticDuration": "376s",
+              "polyline": {
+                "encodedPolyline": "ydqmCwutgO]BOQ_@OqFiBsHiCuAc@gPgG_Cu@i@@o@Jg@T{@VuBfAi@FcAGe@KkAi@gE}BaIgDcCwAi@WeJkDqD_AkA[iAUkEa@aDi@oA_@_Am@}E{D_@S"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.3583745,
+                  "longitude": 85.3079631
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.3787272,
+                  "longitude": 85.31598269999999
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_RIGHT",
+                "instructions": "Harmu Rd/Kadru - Kumhartoli Rdলৈ যাবলৈ Sahajanand Chowkৰ ওচৰত সোঁফালে ঘূৰক\nHarmu Rdতে গৈ থাকক\n(বাওঁফালে থকা)Adxpertৰ ওচৰেদি যাওক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "২.৫ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "6 mins"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 156,
+              "staticDuration": "44s",
+              "polyline": {
+                "encodedPolyline": "adumC{gvgOu@a@oAY_BSa@K"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.3787272,
+                  "longitude": 85.31598269999999
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.3800505,
+                  "longitude": 85.3164389
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "STRAIGHT",
+                "instructions": "Kushwaha Chowkৰ মাজেৰে Bajra - Bariatu Rd/Kanke Rdত পোনে পোনে গৈ থাকক\n(বাওঁফালে থকা)Deepanjali Storeৰ ওচৰেদি যাওক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "০.২ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "1 min"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 16531,
+              "staticDuration": "1675s",
+              "polyline": {
+                "encodedPolyline": "ilumCwjvgOcDrBaClAWBmBGgDM{BEcC@gEWq@?{@JwG~AmHpBs@R}@ToCv@oATgBJcA?{CKmDKgCSuBEmA@gCIsAKmC]uAWa@K{@G}FK_FO_DAmADwA?uBM{BW{@EiBFqCPcBCeAIsEq@kAUwAOi@Mo@SaBw@cAa@g@EcAHoB\\eHKwFWuG[q@KyD_@{Gs@sCYaHg@kJm@}Fa@q@M_FeByB_@i@A[F_@Te@l@}B`D]Zg@PSFg@@cISaBJcARqFzAeB`@{ErAsObDqATsFn@wD`@iET}QjAmBHkBPyCNwEZkId@gDH}CBsAM}E_AwEcAwASwDYyH_@iAFm@Lw@`@cAx@oBhBg@Zw@LcAF_C@eFWyc@uB{Zu@w@?oJRwL`@_BLs@J[LwAx@eC`BmAt@cHbFqBvA{B`AmItCeCdAaGtBiSfHiA`@eAf@{CnAyBhAaFxCo@XaBf@}Bf@cALsAFs^JoFTeG`@gYlC_BLcG~@{B`@}J`C_HjBqFrAeN~CeAV{Al@wCrA_CjAcHxCmG|BkAb@_@H]BcCo@yBs@uCw@_AAsBDgDZsDLaBTcEHqCB_ALaFx@MA"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.3800505,
+                  "longitude": 85.3164389
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.523050899999998,
+                  "longitude": 85.297857
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_LEFT",
+                "instructions": "Bajra - Bariatu Rd/Kanke Rd/Kanke Patratu Rd/Ranchi Patratu Ramgarh Rd পাবলৈ বাওঁফালে ঘূৰক\n(সোঁফালে থকা)Carpenter Umesh Ranaৰ ওচৰেদি যাওক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "১৬.৫ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "28 mins"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 3128,
+              "staticDuration": "279s",
+              "polyline": {
+                "encodedPolyline": "ajqnCsvrgOiJfD_@Aa@O_@Ku@BwAXg@CuAUsA@s@Ow@Yc@EeBDqAYuCKuC_@mBg@Y@OHIHSd@Mh@S^mArA_Al@k@Tg@l@c@r@eAj@WDQAi@WeA}@_@Oa@K_@BKHa@r@s@n@a@ZGNGr@G`AGRMTc@h@wAnAk@To@TSJu@l@KLEV@TFN^R^NFF?J[r@GD]?gBkASOoByCQ[Gg@?q@G_@q@y@CGEqAIWOKMEO?iDt@a@N}@fAYVwAb@[Dk@Ca@GOASB}@h@WVELAn@BR?RL~@Ej@EPILWRe@Ns@FSEIGGQGwBGwBAK?w@Oc@OQ"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.523050899999998,
+                  "longitude": 85.297857
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.5426355,
+                  "longitude": 85.2947959
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "NAME_CHANGE",
+                "instructions": "Sunny Tea & Coffie Nationৰ ওচৰত Kanke Patratu Rd/Ranchi Patratu Ramgarh Rd সামান্য বাওঁফালে ঘূৰিছে আৰু Kanke Patratu Rd/Ranchi Patratu Ramgarh Rdলৈ সলনি হৈছে\n(সোঁফালে থকা)Pithoria Hill View Pointৰ ওচৰেদি যাওক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "৩.১ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "5 mins"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 270,
+              "staticDuration": "22s",
+              "polyline": {
+                "encodedPolyline": "odunCocrgOc@c@m@UwJaB"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.5426355,
+                  "longitude": 85.2947959
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.544927599999998,
+                  "longitude": 85.29558449999999
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "STRAIGHT",
+                "instructions": "পোনে-পোনে গৈ থাকক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "০.৩ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "1 min"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 14015,
+              "staticDuration": "1241s",
+              "polyline": {
+                "encodedPolyline": "yrunCkhrgOk@Mg@WUc@u@eCk@uCu@_CWa@q@_@wDsAk@KiBGwA]cEwByDuB}BqA_@IeAAoMb@c@EmEcAcFs@OIKU_@eD[mCEO[YuBmAyBqAGCIQIaACc@Wi@e@k@s@o@_@UaCw@qBm@m@CoBd@gAZONGRq@xI?`A\\`E?t@[tDMn@KP_@RiGlBO@SC{@g@gCeB_Ao@WGS@GLATBPl@~A@VQr@KPaA|@i@v@MTENAt@P`CA`@GT_@|@Kr@Av@BVFRZ\\t@p@FJ@NGXMNw@b@Y^q@fAa@TaDf@_I`A[JSLOP_GdJa@\\e@Lm@@mAGYNYZm@hAqBpEiB|CITEd@DbCA\\Gh@Sx@MXW\\gBbBQh@Ep@?l@MbCK`AAl@Jh@X`@\\l@JVAj@Od@Yt@[h@_@h@c@nAUxAMv@Ex@FjDFdATjBD~@ObLIhDA`CHhIGnD?rCAb@KJWBKKEQ?o@ZyD@aAGWSGK?QLCLF~@Bl@Y`DA`@Jd@`@r@ZLp@RRR@BCTKRIDQ?KC_@Si@m@S]_@qAKi@AWHaAC]GKUCSBEDCP?VDV@ZLz@Tp@PVH`@@JIPKDI?QKIQM}@]{BI[GGOCQBCDEXd@dANr@Bd@T|@A\\EDOBI?IGG[BkAKc@EOMMOKWGm@EsBy@eBy@UCa@DUVQrBLl@Zn@TV\\DLA|A}@b@KPAh@DVNFTCb@GRC\\@Z^|At@|@h@`@NVBNGRKDY?g@Q}@c@UW_Ao@YGuDQgAMU?WD_@TYZ[NWA}@m@_@[Ua@{@eBQQWG{@?sGNcAEW?y@QmBIe@?o@TIJWPc@^[j@Qj@uA|F[t@uAhCa@b@k@ViEdAaDv@oB`@{C^cABkKcAaAS_@K]QiA}@yJ_Ms@o@e@U]Km@AmCNo@Gm@MeBc@aBa@c@[WYGK{CmIuDkKq@{BE]?[DU^qAFi@Ce@Ow@]{@}@kDQe@W]mA_Ag@Um@CYJUPWj@]pA]`AMP]RUB_@AuDYe@@YFm@VqBrAkB|AkCnCo@d@aAlAOZWRSJc@DQAu@UgN_G[Uu@aASY{CoGI]"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.544927599999998,
+                  "longitude": 85.29558449999999
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.6102077,
+                  "longitude": 85.28007649999999
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "NAME_CHANGE",
+                "instructions": "Kanke Patratu Rd/Ranchi Patratu Ramgarh Rdতে গৈ থাকক\nRanchi Patratu Ramgarh Rdতে গৈ থাকক\n(১.১ কিঃ মিঃত বাওঁফালে থকা)Patratu Valley Welcome Gateৰ ওচৰেদি যাওক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "১৪.০ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "21 mins"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 7536,
+              "staticDuration": "855s",
+              "polyline": {
+                "encodedPolyline": "yjboCogogOe@c@y@e@c@OUGuKq@uQ}@sACo@Fg@JaBl@c@Rm@NaBp@e@NSJaAZWV_ANkACg@CwBc@aDi@mC[gCYy@AoAF_Fd@Y@w@HoAOeG^{Kt@kBVsNhDoGdBkE~@c@Fm@\\o@HyC@_AAeB[s@OwAg@y@]aAk@mByAg@e@uFiEgIyGcEoDwCsC}DoEsA_B[UeHcIiBoBqBcCa@YiC}C[g@uCoHi@iAe@o@qAsAoB_BqAaB_AqAeEwF{DuFoJsPiOsW{GgLa@o@aImNyEoH{BaD_FwH"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.6102077,
+                  "longitude": 85.28007649999999
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.6633683,
+                  "longitude": 85.310879
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_SLIGHT_LEFT",
+                "instructions": "Patratu Main Rdলৈ যাবলৈ Redma Chowkৰ ওচৰত সামান্য বাওঁফালে\n(সোঁফালে থকা)Santosh Hembromৰ ওচৰেদি যাওক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "৭.৫ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "14 mins"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 179,
+              "staticDuration": "60s",
+              "polyline": {
+                "encodedPolyline": "awloC_hugOg@w@?WHSZ]NYZa@NYH[Ee@EK"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.6633683,
+                  "longitude": 85.310879
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.6630916,
+                  "longitude": 85.3123483
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "NAME_CHANGE",
+                "instructions": "Saunda Basti Main Rdতে গৈ থাকক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "০.২ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "1 min"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 159,
+              "staticDuration": "25s",
+              "polyline": {
+                "encodedPolyline": "iuloCequgOR{AF}@D_CEKKC"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.6630916,
+                  "longitude": 85.3123483
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.6630082,
+                  "longitude": 85.3138429
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_RIGHT",
+                "instructions": "Saunda Basti Main Rdৰ দিশত Occean Blu RO water plantৰ ওচৰত সোঁফালে ঘূৰক\n(সোঁফালে থকা)Sarna tolaৰ ওচৰেদি যাওক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "০.২ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "1 min"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 1640,
+              "staticDuration": "160s",
+              "polyline": {
+                "encodedPolyline": "ytloCozugOLuAF{CAa@KoACuBMiASwAs@uD}@cD]}@mDkHcCkF_CqEaCcFi@uAmAgCs@oAuBgEgCaFOg@@YLq@"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.6630082,
+                  "longitude": 85.3138429
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.6688273,
+                  "longitude": 85.3281488
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_RIGHT",
+                "instructions": "Saunda Basti Main Rdলৈ যাবলৈ Sailesh Hotelৰ ওচৰত সোঁফালে ঘূৰক\n(সোঁফালে থকা)J.S Complex (Base Spoken English)ৰ ওচৰেদি যাওক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "১.৬ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "3 mins"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 465,
+              "staticDuration": "105s",
+              "polyline": {
+                "encodedPolyline": "eymoC}sxgO_@@o@Nu@ZMBi@mASu@MSkAk@u@Q[?o@RcBz@eAr@{Af@"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.6688273,
+                  "longitude": 85.3281488
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.6722857,
+                  "longitude": 85.32811129999999
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_LEFT",
+                "instructions": "PPP TANDOORI CORNERত বাওঁফালে ঘূৰক\n(সোঁফালে থকা)Saunda Bagicha Bus Standৰ ওচৰেদি যাওক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "০.৫ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "2 mins"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 1325,
+              "staticDuration": "224s",
+              "polyline": {
+                "encodedPolyline": "ynnoCusxgOaCgGSmAAuBCe@Uq@]c@YWa@UuAk@{@q@{CcDWKiAIwA?m@Bs@NqBx@qD`B_Ct@{DdAaA^[ZiA|By@jAURE@KC"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.6722857,
+                  "longitude": 85.32811129999999
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.680931599999997,
+                  "longitude": 85.32976099999999
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_RIGHT",
+                "instructions": "সোঁফালে ঘূৰক\n(৯৫০ মিঃত সোঁফালে থকা)Sulabh shauchalayৰ ওচৰেদি যাওক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "১.৩ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "4 mins"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 289,
+              "staticDuration": "59s",
+              "polyline": {
+                "encodedPolyline": "ydpoC_~xgOPw@J_AAk@KQg@o@aAgAkAs@kAgA"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.680931599999997,
+                  "longitude": 85.32976099999999
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.682144899999997,
+                  "longitude": 85.33189469999999
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_RIGHT",
+                "instructions": "Shivaji Rdলৈ যাবলৈ Shakti Colonyৰ ওচৰত সোঁফালে ঘূৰক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "০.৩ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "1 min"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 1342,
+              "staticDuration": "136s",
+              "polyline": {
+                "encodedPolyline": "klpoCikygOGLS\\e@vAeCbPiDrXGx@c@bBc@nE_@vCm@pDQpCKl@[pAa@`A"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.682144899999997,
+                  "longitude": 85.33189469999999
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.685243699999997,
+                  "longitude": 85.3192124
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "TURN_LEFT",
+                "instructions": "Sayal Rd/Sayal Main Rd পাবলৈ Pora Gateত বাওঁফালে ঘূৰক\n(বাওঁফালে থকা)খেলপথাৰখনৰ ওচৰেদি যাওক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "১.৩ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "2 mins"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 972,
+              "staticDuration": "116s",
+              "polyline": {
+                "encodedPolyline": "w_qoCa|vgO_@^WPKNGZa@pE_BzEs@hASRcAZgAHkA@a@@sAd@cAX_CdAcA\\_Br@{@z@}@rAm@n@cA~A"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.685243699999997,
+                  "longitude": 85.3192124
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.691282899999997,
+                  "longitude": 85.3133884
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "NAME_CHANGE",
+                "instructions": "Bhagat Singh Chowkৰ ওচৰত Urimari Sayal Rdতে গৈ থাকক\n(বাওঁফালে থকা)Dr S K Dasৰ ওচৰেদি যাওক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "১.০ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "2 mins"
+                }
+              },
+              "travelMode": "DRIVE"
+            },
+            {
+              "distanceMeters": 8383,
+              "staticDuration": "841s",
+              "polyline": {
+                "encodedPolyline": "oeroCuwugOYj@o@v@yGhEoEtBsA`@mBA}@G_AFy@NqCv@iA`@QPe@JY@OHW^_FzCw@`@s@ZmCv@ULc@h@o@rA_AvAcAnBqAhBoBfCcBjBeA~@[CgELYAe@KmAa@_@Em@AgBH}@AsBV}CLgFFeAFa@?WGwAi@eAg@SUKSOg@c@}@Y[c@W]IwCeAeCoAcBe@{@_@c@YiA{@iDmBuBeBcEcC_FmCsAk@{Ay@sAw@gE_Dc@OiB[cAe@_C_BiAU_AOuAMgC_AkAM}KeCyBk@cBg@o@MWCi@Fo@Z{@r@QXAZFZVr@DX?VGVQJkAH}@A{BKm@?YHSNgD~D_@l@G\\HZr@~@vAlALTj@hCBh@^jBV`ALdABhAEdAMh@KbA[dBS^q@x@aAx@_A`AkBxAuAD]T]l@WnCa@nAG|@BdCMv@]r@]Z_@Fq@?a@R}AfAYNYDiCLs@Fg@`@a@^Yp@[^[Ri@NqAReD|Bg@p@eAz@o@b@o@LO@_@GaAe@y@k@g@wAMOSIwCW_Bc@QScBmDg@c@YMc@AOXOtAWv@mBzC}@~@eA|@w@`@m@NcAFgDCQAUGM[YqBKmACmA@{FGMQC"
+              },
+              "startLocation": {
+                "latLng": {
+                  "latitude": 23.691282899999997,
+                  "longitude": 85.3133884
+                }
+              },
+              "endLocation": {
+                "latLng": {
+                  "latitude": 23.7453124,
+                  "longitude": 85.3019848
+                }
+              },
+              "navigationInstruction": {
+                "maneuver": "NAME_CHANGE",
+                "instructions": "BSNL Storeৰ ওচৰত Barkagaon Sayal Rdতে গৈ থাকক\n(সোঁফালে থকা)PINKY VASTRALAYৰ ওচৰেদি যাওক"
+              },
+              "localizedValues": {
+                "distance": {
+                  "text": "৮.৪ কিল’মিটাৰ"
+                },
+                "staticDuration": {
+                  "text": "14 mins"
+                }
+              },
+              "travelMode": "DRIVE"
+            }
+          ],
+          "travelAdvisory": {
+            "speedReadingIntervals": [
+              {
+                "startPolylinePointIndex": 0,
+                "endPolylinePointIndex": 68,
+                "speed": "NORMAL"
+              },
+              {
+                "startPolylinePointIndex": 68,
+                "endPolylinePointIndex": 76,
+                "speed": "SLOW"
+              },
+              {
+                "startPolylinePointIndex": 76,
+                "endPolylinePointIndex": 119,
+                "speed": "NORMAL"
+              },
+              {
+                "startPolylinePointIndex": 119,
+                "endPolylinePointIndex": 125,
+                "speed": "SLOW"
+              },
+              {
+                "startPolylinePointIndex": 125,
+                "endPolylinePointIndex": 152,
+                "speed": "NORMAL"
+              },
+              {
+                "startPolylinePointIndex": 152,
+                "endPolylinePointIndex": 158,
+                "speed": "SLOW"
+              },
+              {
+                "startPolylinePointIndex": 158,
+                "endPolylinePointIndex": 163,
+                "speed": "NORMAL"
+              },
+              {
+                "startPolylinePointIndex": 163,
+                "endPolylinePointIndex": 173,
+                "speed": "TRAFFIC_JAM"
+              },
+              {
+                "startPolylinePointIndex": 173,
+                "endPolylinePointIndex": 177,
+                "speed": "SLOW"
+              },
+              {
+                "startPolylinePointIndex": 177,
+                "endPolylinePointIndex": 193,
+                "speed": "NORMAL"
+              },
+              {
+                "startPolylinePointIndex": 193,
+                "endPolylinePointIndex": 195,
+                "speed": "SLOW"
+              },
+              {
+                "startPolylinePointIndex": 195,
+                "endPolylinePointIndex": 216,
+                "speed": "NORMAL"
+              },
+              {
+                "startPolylinePointIndex": 216,
+                "endPolylinePointIndex": 218,
+                "speed": "TRAFFIC_JAM"
+              },
+              {
+                "startPolylinePointIndex": 218,
+                "endPolylinePointIndex": 1158,
+                "speed": "NORMAL"
+              }
+            ]
+          },
+          "localizedValues": {
+            "distance": {
+              "text": "৬৩.৭ কিল’মিটাৰ"
+            },
+            "duration": {
+              "text": "2 hours 23 mins"
+            },
+            "staticDuration": {
+              "text": "1 hour 58 mins"
+            }
+          }
+        }
+      ],
+      "distanceMeters": 63710,
+      "duration": "8564s",
+      "polyline": {
+        "encodedPolyline": "oknmCs~tgOk@d@EAi@oAEQ^ODG@I?u@t@aI`@@DOImDBk@LMHARBZMj@@pAHf@mK^wEpATjEr@FAFQDo@jBkLx@mFeCg@g@YOWEe@Du@b@aDJgAKIAEoCYKH_@Ce@Iy@a@]Wg@y@s@m@SMcAc@e@_@IQU?YK]QuEw@_B?oALaAPcBNy@PuAh@cATu@DiEN}@TULW`@yAvDy@tBABS^uBxFUbAC`@@`AJzC@bBHvAJ~AW@{EeAe@dAkAfBq@n@yB|AeF~DaCnBkG~EmB~Aa@Tw@DsA?AzSCbB]BOQ_@OqFiBsHiCuAc@gPgG_Cu@i@@o@Jg@T{@VuBfAi@FcAGe@KkAi@gE}BaIgDcCwAi@WeJkDqD_AkA[iAUkEa@aBY_AOoA_@_Am@}E{D_@Sg@YMGoAY_BSa@KcDrBaClAWBmBGgDM{BEcC@gEWq@?{@JwG~AmHpBs@R}@ToCv@oATgBJcA?{CKmDKgCSuBEaA@K?gCIsAKmC]uAWCA]I{@G}FK_FOe@AyB?mADwA?uBM{BW{@EiBFqCPcBCEA_AGsEq@kAUE?qAOi@Mo@SaBw@cAa@g@EcAHoB\\eHKwFWuG[q@KyD_@{Gs@sCYEA{Ge@oHg@{@E}Fa@q@M_FeByB_@i@A[F_@Te@l@}B`D]Zg@PSFg@@cISaBJcARqFzAeB`@{ErAkE~@gIbBkATE?sFn@wD`@iET{QjAoBHkBPyCNwEZkId@gDH}CBsAM}E_AwEcAwASwDYyH_@iAFm@Lw@`@cAx@oBhBg@Zw@LcAF_C@eFWyc@uB{Zu@w@?oJRwL`@_BLs@J[LwAx@eC`BmAt@cHbFqBvA{B`AmItCeCdAaGtBiSfHiA`@eAf@{CnAyBhAaFxCo@XaBf@}Bf@cALsAFs^JoFTeG`@gYlC_BLcG~@{B`@}J`C_HjBqFrAeN~CeAV{Al@wCrA_CjAcHxCmG|BkAb@_@H]BcCo@yBs@uCw@_AAsBDgDZsDL_BTeEHqCB_ALaFx@MAiJfD_@Aa@O_@Ku@BwAXg@CuAUsA@s@Ow@Yc@EeBDqAYuCKuC_@mBg@Y@OHIHSd@Mh@S^mArA_Al@k@Tg@l@c@r@eAj@WDQAi@WeA}@_@Oa@K_@BKHa@r@s@n@a@ZGNGr@G`AGRMTc@h@wAnAk@To@TSJu@l@KLEV@TFN^R^NFF?J[r@GD]?gBkASOoByCQ[Gg@?q@G_@q@y@CGEqAIWOKMEO?iDt@a@N}@fAYVwAb@[Dk@Ca@GOASB}@h@WVELAn@BR?RL~@Ej@EPILWRe@Ns@FSEIGGQGwBGwBAK?w@Oc@OQc@c@m@UwJaBk@Mg@WUc@u@eCk@uCu@_CWa@q@_@wDsAk@KiBGwA]cEwByDuB}BqA_@IeAAoMb@c@EmEcAcFs@OIKU_@eD[mCEO[YuBmAyBqAGCIQIaACc@Wi@e@k@s@o@_@UaCw@qBm@m@CoBd@gAZONGRq@xI?`A\\`E?t@[tDMn@KP_@RiGlBO@SC{@g@gCeB_Ao@WGS@GLATBPl@~A@VQr@KPaA|@i@v@MTENAt@P`CA`@GT_@|@Kr@Av@BVFRZ\\t@p@FJ@NGXMNw@b@Y^q@fAa@TaDf@_I`A[JSLOP_GdJa@\\e@Lm@@mAGYNYZm@hAqBpEiB|CITEd@DbCA\\Gh@Sx@MXW\\gBbBQh@Ep@?l@MbCK`AAl@Jh@X`@\\l@JVAj@Od@Yt@[h@_@h@c@nAUxAMv@Ex@FjDFdATjBD~@ObLIhDA`CHhIGnD?rCAb@KJWBKKEQ?o@ZyD@aAGWSGK?QLCLF~@Bl@Y`DA`@Jd@`@r@ZLp@RRR@BCTKRIDQ?KC_@Si@m@S]_@qAKi@AWHaAC]GKUCSBEDCP?VDV@ZLz@Tp@PVJ`@?JIPKDI?QKIQM}@]{BI[GGOCQBCDEXd@dANr@Bd@T|@A\\EDOBI?IGG[BkAKc@EOMMOKWGm@EsBy@eBy@UCa@DUVQrBLl@Zn@TV\\DLA|A}@b@KPAh@DVNFTCb@GRC\\@Z^|At@|@h@`@NVBNGRKDY?g@Q}@c@UW_Ao@YGuDQgAMU?WD_@TYZ[NWA}@m@_@[Ua@{@eBQQWG{@?sGNcAEW?y@QmBIe@?o@TIJWPc@^[j@Qj@uA|F[t@uAhCa@b@k@ViEdAaDv@oB`@{C^cABkKcAaAS_@K]QiA}@yJ_Ms@o@e@U]Km@AmCNo@Gm@MeBc@aBa@c@[WYGK{CmIuDkKq@{BE]?[DU^qAFi@Ce@Ow@]{@}@kDQe@W]mA_Ag@Um@CYJUPWj@]pA]`AMP]RUB_@AuDYe@@YFm@VqBrAkB|AkCnCo@d@aAlAOZWRSJc@DQAu@UgN_G[Uu@aASY{CoGI]e@c@y@e@c@OUGuKq@uQ}@sACo@Fg@JaBl@c@Rm@NaBp@e@NSJaAZWV_ANkACg@CwBc@aDi@mC[gCYy@AoAF_Fd@Y@w@HoAOeG^{Kt@kBVsNhDoGdBkE~@c@Fm@\\o@HyC@_AAeB[s@OwAg@y@]aAk@mByAg@e@uFiEgIyGcEoDwCsC}DoEsA_B[UeHcIiBoBqBcCa@YiC}C[g@uCoHi@iAe@o@qAsAoB_BqAaB_AqAeEwF{DuFoJsPiOsW{GgLa@o@aImNyEoH{BaD_FwHg@w@?WHSZ]NYZa@NYH[Ee@EKR{AF}@D_CEKKCLuAF{CAa@KoACuBMiASwAs@uD}@cD]}@mDkHcCkF_CqEaCcFi@uAmAgCs@oAuBgEgCaFOg@@YLq@_@@o@Nu@ZMBi@mASu@MSkAk@u@Q[?o@RcBz@eAr@{Af@aCgGSmAAuBCe@Uq@]c@YWa@UuAk@{@q@{CcDWKiAIwA?m@Bs@NqBx@qD`B_Ct@{DdAaA^[ZiA|By@jAURE@KCPw@J_AAk@KQg@o@aAgAkAs@kAgAGLS\\e@vAeCbPiDrXGx@c@bBc@nE_@vCm@pDQpCKl@[pAa@`A_@^WPKNGZa@pE_BzEs@hASRcAZgAHkA@a@@sAd@cAX_CdAcA\\_Br@{@z@}@rAm@n@cA~AYj@o@v@yGhEoEtBsA`@mBA}@G_AFy@NqCv@iA`@OPg@JY@OHW^_FzCw@`@s@ZmCv@ULc@h@o@rA_AvAcAnBqAhBoBfCcBjBeA~@[CgELYAe@KmAa@_@Em@AgBH}@AsBV}CLgFFeAFa@?WGwAi@eAg@SUKSOg@c@}@Y[c@W]IwCeAeCoAcBe@{@_@c@YiA{@iDmBuBeBcEcC_FmCsAk@{Ay@sAw@gE_Dc@OiB[cAe@_C_BiAU_AOuAMgC_AkAM}KeCyBk@cBg@o@MWCi@Fo@Z{@r@QXAZFZVr@DX?VGVQJkAH}@A{BKm@?YHSNgD~D_@l@G\\HZr@~@vAlALTj@hCBh@^jBV`ALdABhAEdAMh@KbA[dBS^q@x@aAx@_A`AkBxAuAD]T]l@WnCa@nAG|@BdCMv@]r@]Z_@Fq@?a@R}AfAYNYDiCLs@Fg@`@a@^Yp@[^[Ri@NqAReD|Bg@p@eAz@o@b@o@LO@_@GaAe@y@k@g@wAMOSIwCW_Bc@QScBmDg@c@YMc@AOXOtAWv@mBzC}@~@eA|@w@`@m@NcAFgDCQAUGM[YqBKmACmA@{FGMQC"
+      },
+      "travelAdvisory": {
+        "speedReadingIntervals": [
+          {
+            "startPolylinePointIndex": 0,
+            "endPolylinePointIndex": 68,
+            "speed": "NORMAL"
+          },
+          {
+            "startPolylinePointIndex": 68,
+            "endPolylinePointIndex": 76,
+            "speed": "SLOW"
+          },
+          {
+            "startPolylinePointIndex": 76,
+            "endPolylinePointIndex": 119,
+            "speed": "NORMAL"
+          },
+          {
+            "startPolylinePointIndex": 119,
+            "endPolylinePointIndex": 125,
+            "speed": "SLOW"
+          },
+          {
+            "startPolylinePointIndex": 125,
+            "endPolylinePointIndex": 152,
+            "speed": "NORMAL"
+          },
+          {
+            "startPolylinePointIndex": 152,
+            "endPolylinePointIndex": 158,
+            "speed": "SLOW"
+          },
+          {
+            "startPolylinePointIndex": 158,
+            "endPolylinePointIndex": 163,
+            "speed": "NORMAL"
+          },
+          {
+            "startPolylinePointIndex": 163,
+            "endPolylinePointIndex": 173,
+            "speed": "TRAFFIC_JAM"
+          },
+          {
+            "startPolylinePointIndex": 173,
+            "endPolylinePointIndex": 177,
+            "speed": "SLOW"
+          },
+          {
+            "startPolylinePointIndex": 177,
+            "endPolylinePointIndex": 193,
+            "speed": "NORMAL"
+          },
+          {
+            "startPolylinePointIndex": 193,
+            "endPolylinePointIndex": 195,
+            "speed": "SLOW"
+          },
+          {
+            "startPolylinePointIndex": 195,
+            "endPolylinePointIndex": 216,
+            "speed": "NORMAL"
+          },
+          {
+            "startPolylinePointIndex": 216,
+            "endPolylinePointIndex": 218,
+            "speed": "TRAFFIC_JAM"
+          },
+          {
+            "startPolylinePointIndex": 218,
+            "endPolylinePointIndex": 1158,
+            "speed": "NORMAL"
+          }
+        ]
+      }
+    }
+  ]
+}

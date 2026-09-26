@@ -36,19 +36,6 @@ export default function SeverityFilterBar({ activeFilter, onSelectFilter, summar
         <span className="segment-count">{summary.moderateCount}</span>
       </button>
 
-      <button
-        type="button"
-        className={`filter-segment-btn filter-low ${
-          activeFilter === 'normal' || activeFilter === 'low' || activeFilter === 'none'
-            ? 'active'
-            : ''
-        }`}
-        onClick={() => onSelectFilter('normal')}
-      >
-        <span className="segment-dot dot-low" />
-        <span>Normal</span>
-        <span className="segment-count">{normalCount}</span>
-      </button>
     </nav>
   );
 }
