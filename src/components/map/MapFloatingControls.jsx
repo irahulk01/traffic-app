@@ -40,20 +40,8 @@ export default function MapFloatingControls({
         )}
       </div>
 
-      {/* Bottom Right Controls: Recenter on left, Zoom +/- on right */}
-      <div className="map-bottom-right-controls">
-        {/* Recenter to Location Pin (aligned with Minus button) */}
-        <button
-          type="button"
-          className="map-control-btn map-recenter-btn"
-          onClick={onRecenter}
-          title="Recenter Map to Exact Position"
-          aria-label="Recenter Map to Exact Position"
-        >
-          <Crosshair size={17} />
-        </button>
-
-        {/* Zoom In & Zoom Out Buttons (+ on top, - on bottom) */}
+      {/* Bottom Right Controls: Zoom +/- on right */}
+      <div className="map-bottom-right-controls">        {/* Zoom In & Zoom Out Buttons (+ on top, - on bottom) */}
         <div className="map-zoom-group">
           <button
             type="button"

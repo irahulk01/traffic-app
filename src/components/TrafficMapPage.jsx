@@ -39,68 +39,72 @@ export default function TrafficMapPage({
   // Updated once per city (on map load), cached 10 min inside GoogleMapView
   const [realTrafficMap, setRealTrafficMap] = useState({});
 
-  // 1. TanStack Query: static corridor telemetry (local compute, 10-min cache)
-  const {
-    data: trafficData,
-    isLoading,
-    isFetching,
-    refetch,
-  } = useCityTraffic(city);
+  const [dynamicStreets, setDynamicStreets] = useState([]);
+  const [isFetchingTraffic, setIsFetchingTraffic] = useState(true);
+  
+  // Local map theme decoupled from global application theme
+  const [mapTheme, setMapTheme] = useState(theme);
 
-  // Base streets from local trafficEngine (static estimates)
-  const baseStreets = useMemo(() => trafficData?.streets || [], [trafficData?.streets]);
-
-  // 2. Merge real DirectionsService traffic levels into the static corridors.
-  //    When realTrafficMap has data for a corridor, its level + speed override
-  //    the static estimate. Color and badge are recalculated accordingly.
+  // 2. Map real DirectionsService traffic levels onto the dynamically discovered geographic corridors.
   const streets = useMemo(() => {
-    if (Object.keys(realTrafficMap).length === 0) return baseStreets;
+    if (!realTrafficMap || Object.keys(realTrafficMap).length === 0) return [];
+    if (!dynamicStreets || dynamicStreets.length === 0) return [];
 
-    return baseStreets.map((street) => {
-      const real = realTrafficMap[street.id];
-      if (!real) return street;
+    return dynamicStreets
+      .filter((street) => realTrafficMap[street.id] !== undefined)
+      .map((street) => {
+        const real = realTrafficMap[street.id];
+        // 'checking' is a placeholder while Directions API is in-flight
+        const displayLevel = real.level === 'checking' ? 'none' : real.level;
+        const severity = getSeverityColors(displayLevel);
 
-      // Only update if the real level actually differs from static
-      if (real.level === street.level && real.realSpeed === street.speed) return street;
-
-      const severity = getSeverityColors(real.level);
-
-      return {
-        ...street,
-        level: real.level,
-        color: severity.color,
-        colorName: severity.colorName,
-        badgeText: severity.badgeText,
-        cardClass: severity.cardClass,
-        speed: real.realSpeed || street.speed,
-        // Append real duration info to the advisory if available
-        trafficAdvisory: real.trafficDuration
-          ? `${street.trafficAdvisory || street.advisory || ''} • ${real.trafficDuration} with traffic`
-          : street.trafficAdvisory || street.advisory,
-        advisory: real.trafficDuration
-          ? `${street.advisory || ''} • ${real.trafficDuration} with traffic`
-          : street.advisory,
-        // Keep static delay text unless we have real data
-        delay: real.normalDuration
-          ? `+${Math.max(0, Math.round((real.durationRatio - 1) * parseFloat(real.normalDuration) || 0))} mins delay`
-          : street.delay,
-      };
-    });
-  }, [baseStreets, realTrafficMap]);
+        return {
+          ...street,
+          level: displayLevel,
+          isChecking: real.level === 'checking',
+          isStale: real.isStale,
+          intervalCount: real.intervalCount || 0,
+          color: real.level === 'checking' ? '#64748b' : severity.color,
+          colorName: severity.colorName,
+          badgeText: real.level === 'checking' ? 'Checking...' : severity.badgeText,
+          cardClass: real.level === 'checking' ? 'level-checking' : severity.cardClass,
+          speed: real.realSpeed || 0,
+          advisory: real.level === 'checking'
+            ? 'Fetching live traffic data...'
+            : (real.trafficDuration ? `Expected duration: ${real.trafficDuration}` : 'Normal flow'),
+          trafficAdvisory: real.level === 'checking'
+            ? 'Fetching live traffic data...'
+            : (real.trafficDuration ? `Expected duration: ${real.trafficDuration}` : 'Normal flow'),
+          delay: real.level === 'checking'
+            ? 'Live data incoming...'
+            : (real.normalDuration && real.durationRatio > 1
+              ? `+${Math.max(1, Math.round((real.durationRatio - 1) * parseInt(real.normalDuration) || 0))} mins delay`
+              : 'No Delays (Free Flow)'),
+        };
+      });
+  }, [dynamicStreets, realTrafficMap]);
 
   // 3. Recompute summary from merged streets (real traffic levels considered)
   const summary = useMemo(() => {
     if (streets.length === 0) {
-      return trafficData?.summary || {
+      let label = 'No significant traffic detected nearby.';
+      if (isFetchingTraffic === 'error') {
+        label = 'Location access is required to monitor nearby traffic.';
+      } else if (isFetchingTraffic) {
+        label = 'Loading live traffic...';
+      }
+      return {
         congestionScore: 0,
-        statusLabel: 'Syncing Data...',
+        statusLabel: label,
         avgSpeed: 0,
         heavyCount: 0,
         moderateCount: 0,
         lowCount: 0,
         noneCount: 0,
         totalCount: 0,
-        lastUpdatedTime: 'Just now',
+        lastUpdatedTime: new Date().toLocaleTimeString([], {
+          hour: '2-digit', minute: '2-digit', second: '2-digit',
+        }),
       };
     }
 
@@ -133,24 +137,33 @@ export default function TrafficMapPage({
         hour: '2-digit', minute: '2-digit', second: '2-digit',
       }),
     };
-  }, [streets, trafficData?.summary]);
+  }, [streets]);
 
-  // 4. Filter corridors based on severity
+  // 4. Filter and SORT corridors based on severity
   const filteredStreets = useMemo(() => {
     if (!streets || streets.length === 0) return [];
-    if (activeFilter === 'all') return streets;
-    if (activeFilter === 'heavy') return streets.filter((s) => s.level === 'heavy');
-    if (activeFilter === 'moderate') return streets.filter((s) => s.level === 'moderate');
-    if (activeFilter === 'normal' || activeFilter === 'low' || activeFilter === 'none') {
-      return streets.filter((s) => s.level === 'low' || s.level === 'none' || s.level === 'normal');
+    
+    let result = streets;
+    if (activeFilter === 'heavy') result = streets.filter((s) => s.level === 'heavy');
+    else if (activeFilter === 'moderate') result = streets.filter((s) => s.level === 'moderate');
+    else if (activeFilter === 'normal' || activeFilter === 'low' || activeFilter === 'none') {
+      result = streets.filter((s) => s.level === 'low' || s.level === 'none' || s.level === 'normal');
+    } else if (activeFilter !== 'all') {
+      result = streets.filter((s) => s.level === activeFilter);
     }
-    return streets.filter((s) => s.level === activeFilter);
+    
+    // Guarantee heavy traffic is always forced to the very top, followed by size
+    return [...result].sort((a, b) => {
+      if (a.level === 'heavy' && b.level !== 'heavy') return -1;
+      if (b.level === 'heavy' && a.level !== 'heavy') return 1;
+      return (b.intervalCount || 0) - (a.intervalCount || 0);
+    });
   }, [streets, activeFilter]);
 
   // ── Handlers ──────────────────────────────────────────────────────────────
 
   const handleManualRefresh = () => {
-    refetch();
+    setIsFetchingTraffic(true);
     // Clear cached real traffic for this city so DirectionsService re-runs
     setRealTrafficMap({});
   };
@@ -165,7 +178,11 @@ export default function TrafficMapPage({
   }, [dispatch]);
 
   // Called by GoogleMapView when DirectionsService real traffic data is ready
-  const handleRealTrafficData = useCallback((trafficMapData) => {
+  const handleRealTrafficData = useCallback((trafficMapData, discoveredStreets) => {
+    setIsFetchingTraffic(false);
+    if (discoveredStreets) {
+      setDynamicStreets(discoveredStreets);
+    }
     setRealTrafficMap(trafficMapData);
   }, []);
 
@@ -178,9 +195,11 @@ export default function TrafficMapPage({
           city={city}
           onBack={onBack}
           onOpenAlerts={() => dispatch(openNotificationDrawer())}
-          isRefreshing={isFetching || isLoading}
+          isRefreshing={isFetchingTraffic}
           onManualRefresh={handleManualRefresh}
           gpsLocality={gpsLocality}
+          theme={mapTheme}
+          onToggleTheme={() => setMapTheme((prev) => (prev === 'day' ? 'night' : 'day'))}
         />
 
         {/* Scrollable Telemetry Body */}
@@ -200,6 +219,7 @@ export default function TrafficMapPage({
             streets={filteredStreets}
             selectedStreet={selectedStreet}
             onSelectStreet={handleSelectStreet}
+            updatedTime={summary.lastUpdatedTime}
           />
         </div>
       </aside>
@@ -211,9 +231,10 @@ export default function TrafficMapPage({
           streets={streets}
           selectedStreet={selectedStreet}
           apiKey={apiKey}
-          theme={theme}
+          theme={mapTheme}
           onGpsLocality={handleGpsLocality}
           onRealTrafficData={handleRealTrafficData}
+          onGpsError={() => setIsFetchingTraffic('error')}
         />
       </main>
 
