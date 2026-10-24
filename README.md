@@ -10,7 +10,7 @@ With dependencies installed and the existing `.env` configured:
 npm run dev:all
 ```
 
-This starts the traffic backend on port 3001 and Vite on its next available port. Open the **Local** address printed by Vite, then choose **Open traffic map**. Alternatively, run `npm run server` and `npm run dev` in separate terminals.
+This starts the traffic backend on port 3001 and Vite on its next available port. Open the **Local** address printed by Vite to go directly to the Hazaribagh traffic map. Alternatively, run `npm run server` and `npm run dev` in separate terminals.
 
 Required configuration:
 
@@ -45,3 +45,5 @@ Tests use fixtures, not paid provider requests, and cover polyline decoding, omi
 Provider traffic is an estimate that changes over time. Successful API retrieval and UI tests do not establish a measured real-world accuracy percentage.
 
 The mobile traffic sheet has bounded vertical dragging. Navigation occupies its own footer row; safe-area insets and the Safari visual viewport are reserved in layout so the final card can scroll above navigation.
+
+Both `/` and `/traffic-map` open the traffic workspace directly; there is no city-selection landing step.

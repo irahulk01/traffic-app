@@ -8,7 +8,7 @@ export default function TelemetryHeader({ city, onBack, alertCount, onOpenAlerts
   return (
     <header className="telemetry-header">
       <div className="telemetry-header-left">
-        <button type="button" className="back-nav-btn" onClick={onBack} aria-label="Back to monitoring areas" title="Back to monitoring areas"><ArrowLeft size={18} /></button>
+        {onBack && <button type="button" className="back-nav-btn" onClick={onBack} aria-label="Back to monitoring areas" title="Back to monitoring areas"><ArrowLeft size={18} /></button>}
         <div className="telemetry-title-group">
           <h1 className="city-display-name">{city?.name || 'Traffic monitor'}</h1>
           <div className="city-meta-row"><span className="telemetry-source-dot" /> Google Routes <span className={`data-state-pill state-${dataState}`}>{label}</span></div>
