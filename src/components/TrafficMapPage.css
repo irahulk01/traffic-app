@@ -112,3 +112,34 @@
 @keyframes traffic-card-update{0%{background:var(--bg-card-selected)}100%{background:var(--bg-surface)}}
 @keyframes traffic-check-pulse{0%,100%{opacity:.4;transform:scale(.85)}50%{opacity:1;transform:scale(1.2)}}
 @media(prefers-reduced-motion:reduce){.traffic-card-transition,.is-checking .refresh-status-dot,#root .traffic-dashboard-viewport .phase-changed .road-section-card{animation:none!important}}
+/* Visible viewport and safe areas are layout space, never content overlays. */
+#root .app-root-wrapper{height:var(--app-height,100dvh);min-height:0}
+#root .traffic-dashboard-viewport{height:var(--app-height,100dvh)!important}
+.traffic-sheet-handle{display:none}
+#root .traffic-dashboard-viewport .map-city-tag,#root .traffic-dashboard-viewport .map-control-btn,#root .traffic-dashboard-viewport .mobile-view-switcher{backdrop-filter:none;-webkit-backdrop-filter:none;filter:none;background:var(--bg-surface);color:var(--text-primary)}
+#root .traffic-dashboard-viewport .map-tag-area{color:var(--text-primary)}
+#root .traffic-dashboard-viewport .map-tag-source{color:var(--text-secondary)}
+@media(max-width:899px){
+ #root .traffic-dashboard-viewport{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);box-sizing:border-box}
+ #root .traffic-dashboard-viewport.mobile-view-split .map-display-panel{height:calc(var(--app-height,100dvh) * var(--map-share,.28))!important;flex:0 0 calc(var(--app-height,100dvh) * var(--map-share,.28))!important;min-height:120px!important;max-height:36%!important}
+ #root .traffic-dashboard-viewport.mobile-view-split .telemetry-panel{margin-top:-12px;flex:1 1 0!important;min-height:0;border-radius:22px 22px 0 0}
+ #root .traffic-dashboard-viewport.mobile-view-split .telemetry-panel:before{display:none}
+ #root .traffic-dashboard-viewport.mobile-view-split .traffic-sheet-handle{display:grid;place-items:center;flex-shrink:0;height:28px;min-height:28px;width:100%;border:0;background:none;touch-action:none;cursor:ns-resize}
+ .traffic-sheet-handle span{width:34px;height:5px;border-radius:4px;background:var(--border-glass)}
+ #root .traffic-dashboard-viewport .telemetry-header{padding:4px 16px 12px}
+ #root .traffic-dashboard-viewport .city-display-name{font-size:22px}
+ #root .traffic-dashboard-viewport .telemetry-scroll-body{padding:0 16px 24px!important;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;scroll-padding-block:12px 24px}
+ #root .traffic-dashboard-viewport .mobile-view-switcher{position:relative;left:auto;bottom:auto;transform:none;flex:0 0 62px;width:100%;margin:0;padding:6px 12px;gap:4px;border:0;border-top:1px solid var(--border-subtle);border-radius:0;box-shadow:none;z-index:80;order:3}
+ #root .traffic-dashboard-viewport .mobile-view-switcher button{flex:1;min-width:0;padding:8px;min-height:44px;border-radius:12px}
+ #root .traffic-dashboard-viewport.mobile-view-map .map-display-panel{height:auto!important;flex:1 1 0!important;min-height:0!important}
+ #root .traffic-dashboard-viewport.mobile-view-feed .telemetry-panel{height:auto!important;flex:1 1 0!important;padding-top:12px}
+ #root .traffic-dashboard-viewport .map-city-tag{top:10px;left:10px;max-width:calc(100% - 80px)}
+ #root .traffic-dashboard-viewport .map-floating-overlay{top:10px;right:10px}
+ #root .traffic-dashboard-viewport .map-bottom-right-controls,#root .traffic-dashboard-viewport.mobile-view-map .map-bottom-right-controls{bottom:22px;right:10px}
+ #root .traffic-dashboard-viewport .map-locate-button,#root .traffic-dashboard-viewport.mobile-view-map .map-locate-button{bottom:22px;right:64px}
+ #root .traffic-dashboard-viewport .map-data-caption,#root .traffic-dashboard-viewport.mobile-view-map .map-data-caption{bottom:24px;left:10px;max-width:calc(100% - 128px);font-size:10px}
+ #root .traffic-dashboard-viewport.sheet-expanded.mobile-view-split .map-zoom-group{display:none}
+ #root .traffic-dashboard-viewport .map-control-btn{box-shadow:0 2px 7px #0001}
+ #root .traffic-dashboard-viewport .road-name{font-size:16px}
+ #root .traffic-dashboard-viewport .road-route-line,#root .traffic-dashboard-viewport .road-card-meta{font-size:12px;line-height:1.5}
+}

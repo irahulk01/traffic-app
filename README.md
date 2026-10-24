@@ -27,8 +27,8 @@ Vite proxies `/api` to the local backend. Vercel uses `api/traffic.js` for the s
 - Selection uses the actual decoded provider geometry. A normal gap is never merged into a jam.
 - Distances describe the approximate length of an affected route stretch, not an observed vehicle queue.
 - Source/fetch time, route availability and older/unavailable states stay distinct. Speeds and local delays are not invented.
-- The traffic-watch drawer uses the same heavy sections as the map. It is an in-app view; OS push notifications are not configured by this redesign.
-- Location is requested only when **Show my location** is chosen. It does not expand monitoring coverage.
+- The traffic-watch drawer uses the same heavy sections as the map. Device alerts are explicitly opt-in and use the notification service worker. They trigger for a fresh normal/slow-to-heavy route change while the app is open, with a per-route 10-minute cooldown. The drawer includes a test button. On iPhone/iPad (16.4+), first add the site to the Home Screen and open it there; system permission and Focus settings control presentation. Closed-app background traffic alerts are not enabled: they require a durable push-subscription store and a separate background monitor. This Vercel Hobby deployment cannot schedule minute-frequency cron jobs.
+- Location is requested only when **Show my location** or **Near me** is chosen. It does not expand monitoring coverage.
 
 The backend deduplicates concurrent requests and shares a 60-second cached batch. Requests have timeouts; retained results preserve their original fetch times and become explicitly stale. The collector does not run upstream requests just because the backend is idle. Frontend polling pauses when the document is hidden.
 
@@ -43,3 +43,5 @@ npm run lint
 Tests use fixtures, not paid provider requests, and cover polyline decoding, omitted zero indices, normal gaps, separate severity intervals, failed/normal states, stale timestamps and backend request deduplication.
 
 Provider traffic is an estimate that changes over time. Successful API retrieval and UI tests do not establish a measured real-world accuracy percentage.
+
+The mobile traffic sheet has bounded vertical dragging. Navigation occupies its own footer row; safe-area insets and the Safari visual viewport are reserved in layout so the final card can scroll above navigation.

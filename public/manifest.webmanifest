@@ -1,26 +1,29 @@
 {
-  "name": "GatiLive • Police Traffic Command & Control",
+  "name": "GatiLive \u00b7 Hazaribagh Traffic",
   "short_name": "GatiLive",
-  "description": "Live real-time 50km street traffic radar & police monitoring dashboard for Indian cities.",
-  "start_url": "/",
+  "description": "Fresh traffic updates on monitored roads around Hazaribagh.",
+  "start_url": "/traffic-map",
   "id": "/",
   "display": "standalone",
-  "background_color": "#090d16",
-  "theme_color": "#090d16",
-  "orientation": "portrait-primary",
+  "background_color": "#161618",
+  "theme_color": "#161618",
+  "orientation": "any",
   "icons": [
     {
-      "src": "/favicon.svg",
+      "src": "/icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
-      "purpose": "any"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "/favicon.svg",
+      "src": "/icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ],
-  "categories": ["navigation", "utilities", "government"]
+  "categories": [
+    "navigation",
+    "utilities"
+  ]
 }

@@ -1,131 +1,53 @@
-// GatiLive PWA Mobile Notification & Push Service
-
-let swRegistration = null;
-
-/**
- * Register Service Worker on application load
- */
+// Device notifications are opt-in and never request permission from a timer.
+let registrationPromise;
+const ENABLED_KEY = 'gatilive-device-alerts-v1';
 export async function registerServiceWorker() {
-  if (!('serviceWorker' in navigator)) {
-    console.warn('Service Worker is not supported in this browser.');
-    return null;
-  }
-
-  try {
-    const registration = await navigator.serviceWorker.register('/sw.js', {
-      scope: '/',
-    });
-    swRegistration = registration;
-    console.log('GatiLive Service Worker registered successfully:', registration.scope);
-    return registration;
-  } catch (error) {
-    console.warn('Service Worker registration failed:', error);
-    return null;
-  }
+  if (!('serviceWorker' in navigator) || !window.isSecureContext) return null;
+  if (!registrationPromise) registrationPromise = navigator.serviceWorker.register('/sw.js', { scope: '/', updateViaCache: 'none' }).catch(() => { registrationPromise = null; return null; });
+  return registrationPromise;
 }
-
-/**
- * Get the current notification permission state: 'default' | 'granted' | 'denied'
- */
 export function getNotificationPermission() {
-  if (!('Notification' in window)) return 'unsupported';
-  return Notification.permission;
+  return 'Notification' in window ? Notification.permission : 'unsupported';
 }
-
-/**
- * Request notification permission from user
- */
+export function deviceNotificationsEnabled() {
+  try { return localStorage.getItem(ENABLED_KEY) === 'true' && getNotificationPermission() === 'granted'; } catch { return false; }
+}
+export function notificationSupport() {
+  const ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const installed = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  return { needsInstall: ios && !installed, supported: window.isSecureContext && 'Notification' in window && 'serviceWorker' in navigator, permission: getNotificationPermission(), enabled: deviceNotificationsEnabled() };
+}
 export async function requestNotificationPermission() {
-  if (!('Notification' in window)) {
-    return 'unsupported';
-  }
-
-  try {
-    const permission = await Notification.requestPermission();
-    return permission;
-  } catch (err) {
-    console.error('Error requesting notification permission:', err);
-    return 'denied';
-  }
+  if (!notificationSupport().supported || notificationSupport().needsInstall) return 'unsupported';
+  try { return await Notification.requestPermission(); } catch { return 'denied'; }
 }
-
-/**
- * Push native notification directly to Mobile Notification Tray
- */
-export async function sendMobileTrafficPush({
-  title = '🚨 Heavy Traffic Alert',
-  body = 'Heavy congestion reported along monitored routes.',
-  tag = 'traffic-alert',
-  data = {},
-} = {}) {
-  // If permission not granted, request first
-  if (!('Notification' in window)) return false;
-
-  let permission = Notification.permission;
-  if (permission === 'default') {
-    permission = await requestNotificationPermission();
-  }
-
-  if (permission !== 'granted') {
-    return false;
-  }
-
-  const options = {
-    body,
-    icon: '/favicon.svg',
-    badge: '/favicon.svg',
-    tag,
-    renotify: true,
-    vibrate: [200, 100, 200],
-    data: {
-      url: window.location.href,
-      timestamp: Date.now(),
-      ...data,
-    },
-  };
-
+export async function enableDeviceNotifications() {
+  // This call must start directly from the Enable button's click handler.
+  const permission = await requestNotificationPermission();
+  if (permission !== 'granted') return permission;
+  const registration = await registerServiceWorker();
+  if (!registration) return 'unavailable';
+  try { localStorage.setItem(ENABLED_KEY, 'true'); } catch { return 'unavailable'; }
+  return 'granted';
+}
+export async function disableDeviceNotifications() {
+  try { localStorage.removeItem(ENABLED_KEY); } catch { /* Preference storage can be unavailable. */ }
+  const registration = await navigator.serviceWorker?.getRegistration();
+  const notifications = await registration?.getNotifications?.();
+  notifications?.forEach(notification => notification.close());
+}
+export async function sendMobileTrafficPush({ title = 'GatiLive traffic update', body = 'Heavy traffic reported on a monitored road.', tag = 'gatilive-traffic', data = {} } = {}) {
+  if (!deviceNotificationsEnabled()) return false;
+  const registration = await registerServiceWorker();
+  if (!registration) return false;
+  let timeout;
   try {
-    // Attempt via Service Worker registration (native mobile notification panel)
-    if (swRegistration && 'showNotification' in swRegistration) {
-      await swRegistration.showNotification(title, options);
-      return true;
-    }
-
-    // Try getting ready registration
-    if ('serviceWorker' in navigator) {
-      const reg = await navigator.serviceWorker.ready;
-      if (reg && 'showNotification' in reg) {
-        await reg.showNotification(title, options);
-        return true;
-      }
-    }
-
-    // Direct Notification fallback (desktop/safari window)
-    new Notification(title, options);
+    // Avoid hanging on serviceWorker.ready if registration or activation fails.
+    await Promise.race([navigator.serviceWorker.ready, new Promise((_, reject) => { timeout = setTimeout(() => reject(new Error('Notification worker unavailable')), 5000); })]);
+    await registration.showNotification(title, { body, icon: '/icons/icon-192.png', badge: '/icons/badge-96.png', tag, data: { ...data, url: '/traffic-map' } });
     return true;
-  } catch (err) {
-    console.error('Failed to trigger mobile push notification:', err);
-    return false;
-  }
+  } catch { return false; } finally { clearTimeout(timeout); }
 }
-
-/**
- * Format and dispatch an alert for a specific heavy traffic corridor
- */
-export async function dispatchHeavyTrafficAlert(street, cityName = '') {
-  const distText = street.distanceKm ? ` (${street.distanceKm} km away)` : '';
-  const title = `🚨 Severe Traffic: ${street.name}${distText}`;
-  const body = `${street.delay || 'Heavy delays'} • Crawl speed: ${street.speed} km/h • ${street.trafficAdvisory || street.advisory || 'Slow moving traffic'}`;
-
-  return sendMobileTrafficPush({
-    title,
-    body,
-    tag: `heavy-traffic-${street.id || street.name}`,
-    data: {
-      streetName: street.name,
-      cityName,
-      coordinates: street.coordinates,
-    },
-  });
+export async function dispatchHeavyTrafficAlert(street) {
+  return sendMobileTrafficPush({ title: 'Heavy traffic in Hazaribagh', body: `${street.name || street.routeName} · Heavy traffic reported on a monitored section.`, tag: `gatilive-heavy-${street.routeId || street.id}` });
 }
-

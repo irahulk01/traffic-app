@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Bell, X, ArrowUpRight, CircleCheck, CloudOff } from 'lucide-react';
 import './TrafficAlertModal.css';
+import DeviceNotificationSettings from './DeviceNotificationSettings';
 
 export default function TrafficAlertModal({ isOpen, onClose, cityName = 'Hazaribagh', streets = [], dataState = 'unavailable', onSelectStreet }) {
   const dialog = useRef(null);
@@ -29,6 +30,7 @@ export default function TrafficAlertModal({ isOpen, onClose, cityName = 'Hazarib
       {dataState === 'stale' && <p className="live-alert-warning">These are older observations. The latest update failed.</p>}
       {dataState === 'partial' && <p className="live-alert-warning">Some routes are unavailable. This list may be incomplete.</p>}
       {unavailable ? <div className="live-alert-empty"><CloudOff size={30} /><h3>{dataState === 'loading' ? 'Checking traffic' : 'Traffic data unavailable'}</h3><p>We cannot confirm current heavy traffic until the monitored routes return data.</p></div> : streets.length ? <div className="live-alert-list">{streets.map(street => <button type="button" key={street.id} onClick={() => onSelectStreet?.(street)}><span className="live-alert-marker" /><span><strong>{street.name}</strong><small>{street.sectionLabel}</small></span><ArrowUpRight size={18} /></button>)}</div> : <div className="live-alert-empty"><CircleCheck size={30} /><h3>{dataState === 'stale' ? 'No heavy sections in the older observation' : 'No heavy sections reported'}</h3><p>This applies to the available monitored routes, not every road in the district.</p></div>}
+      <DeviceNotificationSettings />
       <footer>Source: Google Routes · In-app traffic watch</footer>
     </section>
   </div>;

@@ -218,7 +218,7 @@ export default function GoogleMapView({ city, streets = [], selectedStreet, apiK
     const bounds = new window.google.maps.LatLngBounds();
     streets.forEach(street => street.path.forEach(point => bounds.extend(point)));
     map.fitBounds(bounds, 60);
-  }, [filterKey, streets, engine, dataReady]);
+  }, [filterKey, streets, engine, dataReady, selectedStreet]);
 
   const recenter = () => {
     callbacks.current.onSelectStreet?.(null);
