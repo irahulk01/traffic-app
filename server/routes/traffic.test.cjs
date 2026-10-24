@@ -32,7 +32,9 @@ test('concurrent viewers share one upstream batch; a failed refresh preserves ag
     const firstTime = snapshots[0].results[0].fetchedAt;
     fail = true;
     Date.now = () => originalNow() + 61000;
-    const stale = await (await originalFetch(url)).json();
+    const refreshResponses = await Promise.all([originalFetch(url), originalFetch(url)]);
+    const stale = await refreshResponses[0].json();
+    assert.deepEqual(await refreshResponses[1].json(), stale, 'viewers joining a refresh must receive that same refreshed snapshot');
     assert.equal(calls, routeCount * 2);
     assert.equal(stale.results[0].isStale, true);
     assert.equal(stale.results[0].fetchedAt, firstTime);
@@ -41,6 +43,8 @@ test('concurrent viewers share one upstream batch; a failed refresh preserves ag
     const finalMeter = await (await originalFetch(`${url}/usage`)).json();
     assert.equal(finalMeter.upstreamFailures, routeCount);
     assert.equal(finalMeter.cacheHits, 1);
+    assert.equal(finalMeter.joinedRequests, 2);
+    assert.ok(stale.nextRefreshAt);
     assert.equal(finalMeter.coveredRoutes, routeCount);
   } finally {
     global.fetch = originalFetch; Date.now = originalNow;

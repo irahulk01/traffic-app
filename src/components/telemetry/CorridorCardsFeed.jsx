@@ -1,27 +1,29 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState, useMemo } from 'react';
 import { AlertCircle, CheckCircle2, LoaderCircle, Radio } from 'lucide-react';
-import CorridorCard from './CorridorCard';
+import RoadTrafficCard from './RoadTrafficCard';
+import { groupTrafficSections } from '../../data/groupTrafficSections';
 
-export default function CorridorCardsFeed({ streets = [], selectedStreet, onSelectStreet, updatedTime, dataState = 'fresh', activeFilter = 'all', isRefreshing = false }) {
-  const [rows, setRows] = useState(() => streets.map(street => ({ street, phase: 'enter' })));
-  const previous = useRef(streets);
+export default function CorridorCardsFeed({ streets = [], selectedStreet, onSelectStreet, dataState = 'fresh', activeFilter = 'all', isRefreshing = false }) {
+  const roads = useMemo(() => groupTrafficSections(streets), [streets]);
+  const [rows, setRows] = useState(() => roads.map(street => ({ street, phase: 'enter' })));
+  const previous = useRef(roads);
   const elements = useRef(new Map());
   const positions = useRef(new Map());
   useEffect(() => {
     const old = new Map(previous.current.map(street => [street.id, street]));
-    const incoming = new Set(streets.map(street => street.id));
-    const next = streets.map(street => {
+    const incoming = new Set(roads.map(street => street.id));
+    const next = roads.map(street => {
       const before = old.get(street.id);
-      const changed = before && (before.level !== street.level || before.affectedLengthMeters !== street.affectedLengthMeters || before.isStale !== street.isStale);
+      const changed = before && (before.level !== street.level || before.affectedLengthMeters !== street.affectedLengthMeters || before.isStale !== street.isStale || before.sectionCount !== street.sectionCount);
       return { street, phase: !before ? 'enter' : changed ? 'changed' : 'stable' };
     });
     // Removed observations become non-interactive immediately, then leave gently.
     old.forEach(street => { if (!incoming.has(street.id)) next.push({ street, phase: 'exit' }); });
-    previous.current = streets;
+    previous.current = roads;
     setRows(next);
     const timer = setTimeout(() => setRows(current => current.filter(row => row.phase !== 'exit').map(row => ({ ...row, phase: 'stable' }))), 320);
     return () => clearTimeout(timer);
-  }, [streets]);
+  }, [roads]);
   useLayoutEffect(() => {
     const next = new Map();
     elements.current.forEach((element, id) => {
@@ -46,7 +48,7 @@ export default function CorridorCardsFeed({ streets = [], selectedStreet, onSele
     return <div className={`corridors-empty-state empty-${dataState}`} role="status"><span className="empty-state-icon"><Icon size={20} /></span><h3>{content[1]}</h3><p>{content[2]}</p></div>;
   }
   return <div className="traffic-feed-region" aria-busy={isRefreshing}>
-    <div className={`traffic-refresh-status ${isRefreshing ? 'is-checking' : ''}`} role="status"><span className="refresh-status-dot" />{isRefreshing ? 'Checking for traffic changes…' : 'Monitored roads · Updates every minute'}</div>
-    <div className="corridor-cards-feed" aria-label="Traffic on monitored roads">{rows.map(({ street, phase }) => <div key={street.id} ref={element => { if (element) elements.current.set(street.id, element); else elements.current.delete(street.id); }} className={`traffic-card-transition phase-${phase}`} aria-hidden={phase === 'exit' ? true : undefined} inert={phase === 'exit' ? true : undefined}><CorridorCard street={street} isSelected={selectedStreet?.id === street.id} onSelect={onSelectStreet} updatedTime={updatedTime} /></div>)}</div>
+    <div className={`traffic-refresh-status ${isRefreshing ? 'is-checking' : ''}`} role="status"><span className="refresh-status-dot" />{isRefreshing ? 'Checking for traffic changes…' : `${roads.length} affected ${roads.length === 1 ? 'road' : 'roads'} · ${streets.length} sections`}</div>
+    <div className="corridor-cards-feed" aria-label="Traffic on monitored roads">{rows.map(({ street, phase }) => <div key={street.id} ref={element => { if (element) elements.current.set(street.id, element); else elements.current.delete(street.id); }} className={`traffic-card-transition phase-${phase}`} aria-hidden={phase === 'exit' ? true : undefined} inert={phase === 'exit' ? true : undefined}><RoadTrafficCard road={street} selectedStreet={selectedStreet} onSelectStreet={onSelectStreet} /></div>)}</div>
   </div>;
 }

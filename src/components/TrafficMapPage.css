@@ -176,3 +176,19 @@
 /* Desktop keeps the full labels; compact alternatives are mobile-only. */
 .summary-foot .summary-age-compact,.metric-label .metric-label-compact{display:none}
 @media(max-width:899px){#root .traffic-dashboard-viewport .summary-age-compact,#root .traffic-dashboard-viewport .metric-label-compact{display:inline}}
+.road-group-card{padding:16px;border:1px solid transparent;border-radius:16px;background:var(--bg-surface);color:var(--text-primary)}.road-group-card.is-selected{border-color:var(--police-cyan)}.road-group-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.road-group-card h3{font:600 16px/1.4 var(--font-body);margin:9px 0 6px}.road-group-description{font-size:12px;line-height:1.5;color:var(--text-secondary)}.road-group-meta{display:flex;justify-content:space-between;gap:8px;margin-top:12px;font-size:11px;color:var(--text-secondary)}.road-group-meta>span:last-child{display:flex;align-items:center;gap:4px}.road-group-actions{display:flex;justify-content:space-between;gap:8px;margin-top:12px}.road-group-actions button{display:flex;align-items:center;justify-content:center;gap:5px;border:0;background:var(--bg-card);color:var(--text-primary);padding:10px;min-height:44px;border-radius:10px;font:500 12px var(--font-body);cursor:pointer}.road-group-actions button:last-child{background:none;color:var(--police-cyan)}.road-group-actions svg{transition:transform .2s}.road-group-actions svg.is-expanded{transform:rotate(180deg)}.road-group-sections{display:grid;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border-subtle);animation:traffic-card-arrive .22s ease-out}#root .traffic-dashboard-viewport .road-group-sections .road-section-card{background:var(--bg-card);padding:12px}.road-group-sections .road-name{display:none}
+@media(prefers-reduced-motion:reduce){.road-group-sections{animation:none}.road-group-actions svg{transition:none}}
+.traffic-recovery-status{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px;padding:4px 10px;border-radius:10px;background:var(--bg-card);font-size:11px;line-height:1.5;color:var(--text-secondary)}.traffic-recovery-status button{border:0;background:none;color:var(--police-cyan);min-height:44px;padding:8px 0;font:500 12px var(--font-body);white-space:nowrap;cursor:pointer}.traffic-recovery-status button:disabled{opacity:.6;cursor:default}
+
+/* Expand and collapse both retain context; collapsed sections cannot receive focus. */
+.road-group-disclosure{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows 280ms cubic-bezier(.2,.8,.2,1),opacity 180ms ease}
+.road-group-disclosure.is-open{grid-template-rows:1fr;opacity:1}
+.road-group-disclosure>.road-group-sections{min-height:0;overflow:hidden;margin:0;padding:0;border:0;animation:none;visibility:hidden;transition:visibility 0s 280ms}
+.road-group-disclosure.is-open>.road-group-sections{visibility:visible;transition-delay:0s}
+.road-group-sections:before{content:'';height:4px}
+.road-group-card{transition:border-color 200ms ease,background-color 200ms ease,box-shadow 200ms ease}
+#root .traffic-dashboard-viewport .phase-changed .road-group-card{animation:traffic-card-update 420ms ease-out both}
+.road-group-actions button,.workspace-tabs button,.mobile-view-switcher button{transition:background-color 180ms ease,color 180ms ease,transform 140ms ease}
+.traffic-recovery-status{animation:traffic-card-arrive 220ms ease-out both}
+@media(hover:hover){.road-group-actions button:hover{background:var(--bg-card-selected)}}
+@media(prefers-reduced-motion:reduce){.road-group-disclosure,.road-group-disclosure>.road-group-sections,.road-group-card,.road-group-actions button,.workspace-tabs button,.mobile-view-switcher button{transition:none!important}.traffic-recovery-status,#root .traffic-dashboard-viewport .phase-changed .road-group-card{animation:none!important}}
