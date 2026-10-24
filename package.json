@@ -9,7 +9,7 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "server": "node server/index.cjs",
-    "test": "node --test src/data/trafficSections.test.js server/routes/traffic.test.cjs src/services/trafficNotificationPolicy.test.js src/services/notificationService.test.js",
+    "test": "node --test src/data/trafficSections.test.js server/routes/traffic.test.cjs src/services/trafficNotificationPolicy.test.js src/services/notificationService.test.js src/data/groupTrafficSections.test.js src/services/trafficPolling.test.js",
     "dev:all": "node scripts/dev.mjs"
   },
   "dependencies": {

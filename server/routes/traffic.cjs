@@ -49,7 +49,7 @@ async function collect() {
       return { routeId: route.id, routeName: route.name, success: false, error: error.message };
     }
   }));
-  snapshot = { timestamp: new Date().toISOString(), results };
+  snapshot = { timestamp: new Date().toISOString(), nextRefreshAt: new Date(lastAttempt + TTL).toISOString(), results };
   return snapshot;
 }
 
@@ -57,6 +57,8 @@ router.get('/', async (_req, res) => {
   res.set('Cache-Control', 'no-store');
   usage.clientRequests++;
   try {
+    // Join a refresh already in progress instead of returning an older snapshot.
+    if (inFlight) { usage.joinedRequests++; return res.json(await inFlight); }
     if (snapshot && Date.now() - lastAttempt < TTL) { usage.cacheHits++; return res.json(snapshot); }
     if (!inFlight) {
       lastAttempt = Date.now();

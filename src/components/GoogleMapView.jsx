@@ -5,6 +5,7 @@ import { GOOGLE_MAPS_DARK_STYLE, GOOGLE_MAPS_DAY_STYLE } from './map/mapStyles';
 import MapFloatingControls from './map/MapFloatingControls';
 import MapCityTag from './map/MapCityTag';
 import monitoredRoutes from '../data/monitoredRoutes.json';
+import { createTrafficPoller } from '../services/trafficPolling';
 import { normalizeTraffic } from '../data/trafficSections';
 
 const CENTER = { lat: 23.9966, lng: 85.3691 };
@@ -30,7 +31,7 @@ export default function GoogleMapView({ city, streets = [], selectedStreet, apiK
   const mapRef = useRef(null);
   const leafletRef = useRef(null);
   const layerRef = useRef(null);
-  const linesRef = useRef([]);
+  const linesRef = useRef(new Map());
   const popupRef = useRef(null);
   const userMarkerRef = useRef(null);
   const callbacks = useRef({ onRealTrafficData, onSelectStreet, onDataState });
@@ -100,7 +101,7 @@ export default function GoogleMapView({ city, streets = [], selectedStreet, apiK
       window.gm_authFailure = oldAuthFailure;
       layerRef.current?.setMap(null);
       linesRef.current.forEach(line => line.setMap(null));
-      linesRef.current = [];
+      linesRef.current.clear();
       popupRef.current?.close();
       userMarkerRef.current?.setMap(null);
       if (leafletRef.current && leafletRef.current === created) { leafletRef.current.remove(); leafletRef.current = null; }
@@ -111,40 +112,40 @@ export default function GoogleMapView({ city, streets = [], selectedStreet, apiK
   }, [apiKey]);
 
   useEffect(() => {
-    let cancelled = false;
-    let pending = false;
-    let controller;
-    const collect = async () => {
-      if (pending || document.visibilityState === 'hidden') return;
-      pending = true;
-      controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 16000);
-      callbacks.current.onDataState?.({ isFetching: true });
-      try {
-        const response = await fetch('/api/traffic', { signal: controller.signal, cache: 'no-store' });
+    const poller = createTrafficPoller({
+      isVisible: () => document.visibilityState !== 'hidden',
+      isOnline: () => navigator.onLine !== false,
+      load: async signal => {
+        const response = await fetch('/api/traffic', { signal, cache: 'no-store' });
         if (!response.ok) throw new Error('Traffic service unavailable');
         const payload = await response.json();
-        if (cancelled) return;
         const normalized = normalizeTraffic(payload);
         if (normalized.meta.dataState === 'unavailable') throw new Error('Traffic coverage unavailable');
+        normalized.meta.nextRefreshAt = payload.nextRefreshAt;
+        if (normalized.meta.dataState !== 'fresh') normalized.meta.error = 'Some roads could not be refreshed. Older observations are labelled.';
+        return normalized;
+      },
+      onStatus: status => callbacks.current.onDataState?.(status),
+      onSuccess: normalized => {
         lastSnapshotRef.current = normalized;
         callbacks.current.onRealTrafficData?.(normalized.sections, normalized.meta);
-      } catch (error) {
-        if (cancelled) return;
+      },
+      onFailure: error => {
         const previous = lastSnapshotRef.current;
+        const message = navigator.onLine === false ? 'You’re offline. Updates resume when your connection returns.' : error.name === 'AbortError' ? 'The update took too long. We’ll retry automatically.' : 'Update failed. We’ll retry automatically.';
         if (previous?.meta.lastUpdated && Date.now() - Date.parse(previous.meta.lastUpdated) < 15 * 60000) {
-          callbacks.current.onRealTrafficData?.(previous.sections.map(s => ({ ...s, isStale: true })), { ...previous.meta, dataState: 'stale', error: 'Update failed. Showing the last successful observation.' });
-        } else callbacks.current.onDataState?.({ dataState: 'unavailable', error: error.name === 'AbortError' ? 'Traffic request timed out.' : 'Traffic is temporarily unavailable. Try refresh.' });
-      } finally {
-        clearTimeout(timeout); pending = false;
-        if (!cancelled) callbacks.current.onDataState?.({ isFetching: false });
-      }
-    };
-    collect();
-    const interval = setInterval(collect, 60000);
-    const resume = () => { if (document.visibilityState === 'visible') collect(); };
+          callbacks.current.onRealTrafficData?.(previous.sections.map(s => ({ ...s, isStale: true })), { ...previous.meta, dataState: 'stale', error: message });
+        } else callbacks.current.onDataState?.({ dataState: 'unavailable', error: message });
+      },
+    });
+    const resume = () => { if (document.visibilityState === 'visible') poller.refresh(); else poller.pause(); };
+    const online = () => poller.refresh();
+    const offline = () => poller.offline();
+    poller.refresh();
     document.addEventListener('visibilitychange', resume);
-    return () => { cancelled = true; controller?.abort(); clearInterval(interval); document.removeEventListener('visibilitychange', resume); };
+    window.addEventListener('online', online);
+    window.addEventListener('offline', offline);
+    return () => { poller.stop(); document.removeEventListener('visibilitychange', resume); window.removeEventListener('online', online); window.removeEventListener('offline', offline); };
   }, [refreshToken]);
 
   useEffect(() => {
@@ -156,23 +157,41 @@ export default function GoogleMapView({ city, streets = [], selectedStreet, apiK
   useEffect(() => {
     if (engine !== 'google' || !mapRef.current) return;
     layerRef.current?.setMap(trafficEnabled ? mapRef.current : null);
-    linesRef.current.forEach(line => line.setMap(null));
-    linesRef.current = [];
-    if (!trafficEnabled) return;
-    if (focusedRoute?.path?.length) linesRef.current.push(new window.google.maps.Polyline({ map: mapRef.current, path: focusedRoute.path, strokeColor: '#007aff', strokeOpacity: 0.55, strokeWeight: 4, zIndex: 1, clickable: false }));
-    const selectedId = selectedStreet?.id;
+    // Reconcile overlays by identity; keep the base map and unchanged geometry alive.
+    const desired = new Map();
+    if (focusedRoute?.path?.length) desired.set('focused-route', {
+      path: focusedRoute.path, strokeColor: '#007aff', strokeOpacity: 0.55,
+      strokeWeight: 4, zIndex: 1, clickable: false,
+    });
     for (const street of streets) {
       if (!street.path?.length) continue;
-      const selected = street.id === selectedId;
-      const line = new window.google.maps.Polyline({
-        map: mapRef.current, path: street.path, strokeColor: street.color,
+      const selected = street.id === selectedStreet?.id;
+      desired.set(street.id, { path: street.path, strokeColor: street.color,
         strokeOpacity: selected ? 1 : 0.72, strokeWeight: selected ? 9 : 5,
-        zIndex: selected ? 20 : 5, clickable: true,
-      });
-      line.addListener('click', () => callbacks.current.onSelectStreet?.(street));
-      linesRef.current.push(line);
+        zIndex: selected ? 20 : 5, clickable: true, street });
     }
-    return () => { linesRef.current.forEach(line => line.setMap(null)); linesRef.current = []; };
+    linesRef.current.forEach((line, id) => {
+      if (!desired.has(id)) {
+        window.google.maps.event.clearInstanceListeners(line);
+        line.setMap(null);
+        linesRef.current.delete(id);
+      }
+    });
+    desired.forEach(({ street, path, ...options }, id) => {
+      let line = linesRef.current.get(id);
+      if (!line) {
+        line = new window.google.maps.Polyline();
+        linesRef.current.set(id, line);
+        if (street) line.addListener('click', () => callbacks.current.onSelectStreet?.(line.trafficStreet));
+      }
+      line.trafficStreet = street;
+      // Geometry comparison avoids resetting an unchanged path after each poll.
+      const geometry = JSON.stringify(path);
+      if (line.trafficGeometry !== geometry) { line.setPath(path); line.trafficGeometry = geometry; }
+      line.setOptions(options);
+      const target = trafficEnabled ? mapRef.current : null;
+      if (line.getMap() !== target) line.setMap(target);
+    });
   }, [streets, selectedStreet?.id, focusedRoute, trafficEnabled, engine]);
 
   useEffect(() => {
