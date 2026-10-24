@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Map, List, PanelsTopLeft } from 'lucide-react';
 import GoogleMapView from './GoogleMapView';
@@ -9,6 +9,8 @@ import TrafficAlertModal from './TrafficAlertModal';
 import { setSelectedStreet, setMobileView } from '../store/uiSlice';
 import TelemetryHeader from './telemetry/TelemetryHeader';
 import CongestionGaugeCard from './telemetry/CongestionGaugeCard';
+import { heavyRouteTransitions } from '../services/trafficNotificationPolicy';
+import { deviceNotificationsEnabled, sendMobileTrafficPush } from '../services/notificationService';
 import CorridorCardsFeed from './telemetry/CorridorCardsFeed';
 
 const COLORS = { heavy: '#f16d73', moderate: '#f4b557' };
@@ -17,6 +19,9 @@ export default function TrafficMapPage({ city, onBack, apiKey, theme = 'night', 
   const dispatch = useDispatch();
   const mobileView = useSelector(state => state.ui.mobileView);
   const selectedStreet = useSelector(state => state.ui.selectedStreet);
+  const [mapShare, setMapShare] = useState(.28);
+  const sheetGesture = useRef(null);
+  const sheetDragged = useRef(false);
   const [contentView, setContentView] = useState('updates');
   const [focusedRoute, setFocusedRoute] = useState(null);
   const [activeFilter, setActiveFilter] = useState('all');
@@ -43,6 +48,21 @@ export default function TrafficMapPage({ city, onBack, apiKey, theme = 'night', 
   const streets = useMemo(() => sections.map(section => ({ ...section, isStale: section.isStale || dataState === 'stale' || dataState === 'unavailable' })), [sections, dataState]);
   const filtered = useMemo(() => streets.filter(street => (!focusedRoute || street.routeId === focusedRoute) && (activeFilter === 'all' || street.level === activeFilter)), [streets, activeFilter, focusedRoute]);
   const routeSummaries = useMemo(() => (meta.routeSummaries || []).map(route => ({ ...route, isStale: route.isStale || dataState === 'stale' || dataState === 'unavailable' })), [meta.routeSummaries, dataState]);
+  const notificationStates = useRef(null);
+  useEffect(() => {
+    if (!routeSummaries.length) return;
+    const next = heavyRouteTransitions(notificationStates.current, routeSummaries);
+    notificationStates.current = next.states;
+    if (!deviceNotificationsEnabled()) return;
+    const candidates = next.entered.filter(route => {
+      try { return Date.now() - Number(localStorage.getItem(`gatilive-notified:${route.routeId}`) || 0) > 10 * 60000; } catch { return false; }
+    });
+    if (!candidates.length) return;
+    const names = candidates.slice(0, 3).map(route => route.name).join('; ');
+    sendMobileTrafficPush({ title: 'Heavy traffic in Hazaribagh', body: `${names}${candidates.length > 3 ? ` and ${candidates.length - 3} more routes` : ''}. Updated Google traffic on monitored roads.`, tag: 'gatilive-new-heavy' }).then(sent => {
+      if (sent) candidates.forEach(route => { try { localStorage.setItem(`gatilive-notified:${route.routeId}`, String(Date.now())); } catch { /* Alert delivery does not depend on storing history. */ } });
+    });
+  }, [routeSummaries]);
   const routeOverview = routeSummaries.find(route => route.routeId === focusedRoute);
   const selected = selectedStreet ? filtered.find(street => street.id === selectedStreet.id) || null : routeOverview || null;
   const heavy = streets.filter(street => street.level === 'heavy');
@@ -67,8 +87,17 @@ export default function TrafficMapPage({ city, onBack, apiKey, theme = 'night', 
   }, [dispatch, mobileView]);
   const changeFilter = value => { setActiveFilter(value); dispatch(setSelectedStreet(null)); };
 
-  return <div className={`traffic-dashboard-viewport mobile-view-${mobileView}`}>
+  const resizeSheet = event => {
+    const gesture = sheetGesture.current;
+    if (!gesture) return;
+    const delta = event.clientY - gesture.y;
+    if (Math.abs(delta) > 4) sheetDragged.current = true;
+    setMapShare(Math.max(.18, Math.min(.36, gesture.share + delta / gesture.height)));
+  };
+  return <div className={`traffic-dashboard-viewport mobile-view-${mobileView} ${mapShare < .23 ? 'sheet-expanded' : ''}`} style={{ '--map-share': mapShare }}>
+
     <aside className={`telemetry-panel ${mobileView === 'map' ? 'hidden-on-mobile' : ''}`} aria-label="Monitored traffic sections">
+      <button type="button" className="traffic-sheet-handle" aria-label="Resize traffic panel" aria-description="Drag up or down. The panel stops before traffic cards become hidden. Use arrow keys to resize." onPointerDown={event => { sheetDragged.current = false; sheetGesture.current = { y: event.clientY, share: mapShare, height: event.currentTarget.closest('.traffic-dashboard-viewport').clientHeight }; event.currentTarget.setPointerCapture(event.pointerId); }} onPointerMove={resizeSheet} onPointerUp={event => { sheetGesture.current = null; event.currentTarget.releasePointerCapture(event.pointerId); }} onPointerCancel={() => { sheetGesture.current = null; sheetDragged.current = true; }} onClick={() => { if (!sheetDragged.current) setMapShare(value => value < .23 ? .28 : .18); }} onKeyDown={event => { if (event.key === 'ArrowUp' || event.key === 'ArrowDown') { event.preventDefault(); setMapShare(value => Math.max(.18, Math.min(.36, value + (event.key === 'ArrowUp' ? -.04 : .04)))); } }}><span /></button>
       <TelemetryHeader city={city} onBack={onBack} onOpenAlerts={() => setAlertsOpen(true)} alertCount={heavy.length} dataState={dataState} totalRoutes={meta.totalRoutes} availableRoutes={meta.availableRoutes} isRefreshing={meta.isFetching} onManualRefresh={refresh} theme={theme} onToggleTheme={onToggleTheme} />
       <div className="telemetry-scroll-body">
         <CongestionGaugeCard summary={summary} activeFilter={contentView === 'updates' ? activeFilter : null} onSelectFilter={value => { changeFilter(value); setFocusedRoute(null); setContentView('updates'); if (mobileView === 'map') dispatch(setMobileView('split')); }} />

@@ -16,7 +16,7 @@ export default function App() {
     window.addEventListener('popstate', back);
     return () => window.removeEventListener('popstate', back);
   }, []);
-  useEffect(() => { document.documentElement.setAttribute('data-theme', theme); }, [theme]);
+  useEffect(() => { document.documentElement.setAttribute('data-theme', theme); document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'day' ? '#f5f5f7' : '#161618'); }, [theme]);
   const selectCity = () => {
     dispatch(setSelectedCity(HAZARIBAGH));
     window.history.pushState({}, '', '/traffic-map'); setPath('/traffic-map');
