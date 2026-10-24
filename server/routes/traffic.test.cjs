@@ -1,6 +1,5 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const express = require('express');
 const routeCount = require('../../src/data/monitoredRoutes.json').length;
 
 test('concurrent viewers share one upstream batch; a failed refresh preserves age and marks stale', async () => {
@@ -14,11 +13,13 @@ test('concurrent viewers share one upstream batch; a failed refresh preserves ag
     await new Promise(resolve => setTimeout(resolve, 10));
     return { ok: !fail, status: fail ? 429 : 200, json: async () => ({ routes: [{ polyline: { encodedPolyline: 'fixture' }, travelAdvisory: { speedReadingIntervals: [{ endPolylinePointIndex: 1, speed: 'NORMAL' }] } }] }) };
   };
-  const app = express();
-  app.use('/api/traffic', require('./traffic.cjs'));
+  const { default: app } = await import('../../api/[...path].js');
   const server = await new Promise(resolve => { const value = app.listen(0, '127.0.0.1', () => resolve(value)); });
   const url = `http://127.0.0.1:${server.address().port}/api/traffic`;
   try {
+    const missing = await originalFetch(`http://127.0.0.1:${server.address().port}/api/missing`);
+    assert.equal(missing.status, 404);
+    assert.equal((await missing.json()).error, 'API endpoint not found');
     const responses = await Promise.all([originalFetch(url), originalFetch(url)]);
     const snapshots = await Promise.all(responses.map(r => r.json()));
     assert.equal(calls, routeCount);
