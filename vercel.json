@@ -4,11 +4,30 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "functions": {
-    "api/[...path].js": { "maxDuration": 30, "includeFiles": "src/data/monitoredRoutes.json" }
+    "api/traffic.js": {
+      "maxDuration": 30,
+      "includeFiles": "src/data/monitoredRoutes.json"
+    }
   },
   "routes": [
-    { "handle": "filesystem" },
-    { "src": "/api/.*", "status": 404 },
-    { "src": "/.*", "dest": "/index.html" }
+    {
+      "src": "/api/traffic/usage",
+      "dest": "/api/traffic.js?trafficEndpoint=usage"
+    },
+    {
+      "src": "/api/traffic",
+      "dest": "/api/traffic.js"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/api/.*",
+      "status": 404
+    },
+    {
+      "src": "/.*",
+      "dest": "/index.html"
+    }
   ]
 }

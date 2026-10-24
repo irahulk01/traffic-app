@@ -17,7 +17,7 @@ Required configuration:
 - `VITE_GOOGLE_MAPS_API_KEY`: browser key authorized for the Maps JavaScript API and the app's allowed origins.
 - `GOOGLE_API_KEY`: server key authorized for the Routes API. Keep it server-side.
 
-Vite proxies `/api` to the local backend. Vercel uses `api/[...path].js` for the same traffic router and `vercel.json` for the SPA fallback. Configure both keys for Preview and Production in Vercel; redeploy after changing environment variables. Browser-key origin restrictions must include the deployment domain. The usage meter counts only one function instance and resets on cold starts; Vercel may run multiple instances, so use Google Cloud usage reports for deployment-wide consumption.
+Vite proxies `/api` to the local backend. Vercel uses `api/traffic.js` for the same traffic router and `vercel.json` for the SPA fallback. Configure both keys for Preview and Production in Vercel; redeploy after changing environment variables. Browser-key origin restrictions must include the deployment domain. The usage meter counts only one function instance and resets on cold starts; Vercel may run multiple instances, so use Google Cloud usage reports for deployment-wide consumption.
 
 ## What the interface shows
 
