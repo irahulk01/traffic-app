@@ -1,4 +1,5 @@
 import React from 'react';
+import AnimatedTrafficCount from './AnimatedTrafficCount';
 import { Activity, Clock, Route } from 'lucide-react';
 
 const messages = {
@@ -24,7 +25,7 @@ export default function CongestionGaugeCard({ summary, activeFilter = 'all', onS
         <div className="summary-copy"><span className="summary-eyebrow">HAZARIBAGH · TRAFFIC NOW</span><h2>{title}</h2><p>{description}</p></div>
       </div>
       <nav className="summary-metrics-grid" aria-label="Open traffic cards by condition">
-        {[['all', summary.totalCount, 'Affected sections', ''], ['heavy', summary.heavyCount, 'Heavy', 'metric-high'], ['moderate', summary.moderateCount, 'Slow', 'metric-moderate']].map(([id, count, label, tone]) => <button key={id} type="button" className="metric-cell" aria-pressed={activeFilter === id} onClick={() => onSelectFilter?.(id)} aria-label={`Show ${label.toLowerCase()} cards, ${count ?? 0} sections`}><span className={`metric-num ${tone}`}>{['loading', 'unavailable'].includes(dataState) ? '—' : count ?? 0}</span><span className="metric-label">{label}</span></button>)}
+        {[['all', summary.totalCount, 'Affected sections', ''], ['heavy', summary.heavyCount, 'Heavy', 'metric-high'], ['moderate', summary.moderateCount, 'Slow', 'metric-moderate']].map(([id, count, label, tone]) => <button key={id} type="button" className="metric-cell" aria-pressed={activeFilter === id} onClick={() => onSelectFilter?.(id)} aria-label={`Show ${label.toLowerCase()} cards, ${count ?? 0} sections`}><span className={`metric-num ${tone}`}><AnimatedTrafficCount value={['loading', 'unavailable'].includes(dataState) ? '—' : count ?? 0} /></span><span className="metric-label">{label}</span></button>)}
       </nav>
       <div className="summary-foot"><span><Route size={13} /> {summary.availableRoutes ?? '—'} / {summary.totalRoutes ?? '—'} routes</span><span><Clock size={13} /> {summary.updateAge || summary.lastUpdatedTime || 'Update time unavailable'}</span></div>
     </section>
