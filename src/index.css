@@ -199,8 +199,8 @@ html, body {
   right: 16px;
   z-index: 9999;
   background: rgba(19, 32, 57, 0.9);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+
+
   color: var(--text-secondary);
   border: 1px solid var(--border-subtle);
   padding: 7px 14px;
@@ -2082,8 +2082,8 @@ html, body {
   display: flex;
   flex-direction: column;
   background: rgba(19, 32, 57, 0.92);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+
+
   border: 1px solid var(--border-glass);
   border-radius: var(--radius-md);
   overflow: hidden;
@@ -2258,8 +2258,8 @@ html, body {
   inset: 0;
   z-index: 10000;
   background: rgba(0, 0, 0, 0.72);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+
+
   display: flex;
   justify-content: flex-end;
   animation: fadeInBackdrop 0.2s ease-out;
@@ -3544,8 +3544,8 @@ html, body {
   border-radius: var(--radius-lg);
   padding: 14px 16px;
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.65), 0 0 15px rgba(239, 68, 68, 0.3);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+
+
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -3745,7 +3745,7 @@ html, body {
 .ambient-background-glow, .layout-view-toggle-btn { display: none !important; }
 .app-viewport-shell, .app-content-surface { width: 100%; height: 100%; min-height: 0; overflow: hidden; }
 .search-page-scroll-wrap { height: 100%; min-height: 100%; padding: 0 clamp(20px, 5vw, 76px) 24px; gap: 0; overflow: auto; background: var(--bg-canvas); }
-.brand-header-bar { position: sticky; top: 0; z-index: 30; min-height: 72px; margin: 0 calc(clamp(20px, 5vw, 76px) * -1); padding: 0 clamp(20px, 5vw, 76px); border-bottom: 1px solid var(--border-subtle); background: color-mix(in srgb, var(--bg-canvas) 90%, transparent); backdrop-filter: blur(14px); }
+.brand-header-bar { position: sticky; top: 0; z-index: 30; min-height: 72px; margin: 0 calc(clamp(20px, 5vw, 76px) * -1); padding: 0 clamp(20px, 5vw, 76px); border-bottom: 1px solid var(--border-subtle); background: color-mix(in srgb, var(--bg-canvas) 90%, transparent);  }
 .brand-name { color: var(--text-primary); font-size: 15px; letter-spacing: -.02em; }
 .brand-tagline { margin-top: 3px; color: var(--text-muted); font-size: 11px; }
 .brand-icon-box { border-radius: 12px; background: rgba(50, 188, 164, .12); color: var(--police-cyan); }
@@ -3767,7 +3767,7 @@ html, body {
 .art-route-line { position: absolute; left: 24%; top: 52%; width: 54%; height: 2px; background: linear-gradient(90deg,#42c3aa,#81d6c2); transform: rotate(-19deg); box-shadow: 0 0 15px rgba(66,195,170,.5); }
 .art-pin { position: absolute; width: 11px; height: 11px; border: 3px solid #a9f2de; border-radius: 50%; background: #1b8d7d; box-shadow: 0 0 0 5px rgba(66,195,170,.13); }
 .art-pin-one { left: 23%; top: 59%; }.art-pin-two { left: 51%; top: 47%; }.art-pin-three { left: 76%; top: 38%; }
-.art-location-label,.art-data-chip { position: absolute; display: flex; align-items: center; gap: 7px; padding: 8px 11px; border: 1px solid var(--border-glass); border-radius: 10px; background: color-mix(in srgb,var(--bg-surface) 88%,transparent); color: var(--text-primary); font-size: 11px; font-weight: 650; backdrop-filter: blur(12px); }
+.art-location-label,.art-data-chip { position: absolute; display: flex; align-items: center; gap: 7px; padding: 8px 11px; border: 1px solid var(--border-glass); border-radius: 10px; background: color-mix(in srgb,var(--bg-surface) 88%,transparent); color: var(--text-primary); font-size: 11px; font-weight: 650;  }
 .art-location-label { left: 8%; bottom: 10%; }.art-data-chip { right: 7%; top: 9%; color: var(--police-cyan); }
 .coverage-strip { display: flex; align-items: center; justify-content: space-around; gap: 16px; padding: 18px 22px; border: 1px solid var(--border-subtle); border-radius: 16px; background: var(--bg-surface); }
 .coverage-item { display: flex; align-items: center; gap: 12px; color: var(--police-cyan); }.coverage-item div { display: grid; gap: 3px; }.coverage-item strong { color: var(--text-primary); font-size: 12px; font-weight: 700; }.coverage-item span { color: var(--text-muted); font-size: 10px; }.coverage-divider { height: 32px; width: 1px; background: var(--border-subtle); }
