@@ -2139,8 +2139,8 @@ html, body {
   height: 40px;
   border-radius: var(--radius-md);
   background: rgba(19, 32, 57, 0.92);
-  
-  
+
+
   border: 1px solid var(--border-glass);
   color: var(--text-secondary);
   display: flex;
@@ -2174,8 +2174,8 @@ html, body {
   align-items: center;
   gap: 8px;
   background: rgba(19, 32, 57, 0.94);
-  
-  
+
+
   border: 1px solid var(--border-glass);
   padding: 8px 16px;
   border-radius: var(--radius-full);
