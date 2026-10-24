@@ -9,7 +9,8 @@ import App from './App.jsx';
 import { registerServiceWorker } from './services/notificationService';
 
 // Register PWA Service Worker for mobile notifications & caching
-registerServiceWorker();
+if (import.meta.env.PROD) registerServiceWorker();
+else if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistration().then(registration => registration?.unregister()).catch(() => {});
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

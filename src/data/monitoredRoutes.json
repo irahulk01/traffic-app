@@ -1,0 +1,198 @@
+[
+  {
+    "id": "nh20-north",
+    "name": "NH20 toward Barhi",
+    "origin": {
+      "lat": 23.9966,
+      "lng": 85.3691
+    },
+    "dest": {
+      "lat": 24.1612,
+      "lng": 85.39
+    }
+  },
+  {
+    "id": "nh20-south",
+    "name": "NH20 toward Ranchi",
+    "origin": {
+      "lat": 23.9966,
+      "lng": 85.3691
+    },
+    "dest": {
+      "lat": 23.834,
+      "lng": 85.42
+    }
+  },
+  {
+    "id": "nh100-east",
+    "name": "NH100 toward Bagodar",
+    "origin": {
+      "lat": 23.9966,
+      "lng": 85.3691
+    },
+    "dest": {
+      "lat": 24.004,
+      "lng": 85.55
+    }
+  },
+  {
+    "id": "nh100-west",
+    "name": "NH100 toward Chatra",
+    "origin": {
+      "lat": 23.9966,
+      "lng": 85.3691
+    },
+    "dest": {
+      "lat": 24.045,
+      "lng": 85.18
+    }
+  },
+  {
+    "id": "hazaribagh-bypass",
+    "name": "Hazaribagh Bypass",
+    "origin": {
+      "lat": 23.951,
+      "lng": 85.369
+    },
+    "dest": {
+      "lat": 24.015,
+      "lng": 85.335
+    }
+  },
+  {
+    "id": "town-center-east-west",
+    "name": "Town Center \u00b7 Main Road",
+    "origin": {
+      "lat": 23.995,
+      "lng": 85.345
+    },
+    "dest": {
+      "lat": 23.993,
+      "lng": 85.375
+    }
+  },
+  {
+    "id": "town-center-north-south",
+    "name": "Town Center \u00b7 Main Market",
+    "origin": {
+      "lat": 24.005,
+      "lng": 85.36
+    },
+    "dest": {
+      "lat": 23.98,
+      "lng": 85.36
+    }
+  },
+  {
+    "id": "jhanda-hospital-outbound",
+    "name": "Jhanda Chowk \u2192 Sadar Hospital",
+    "origin": {
+      "lat": 23.9917334,
+      "lng": 85.3606259
+    },
+    "dest": {
+      "lat": 23.9974822,
+      "lng": 85.356311
+    },
+    "area": "Hazaribagh city",
+    "verification": "Endpoint locations checked 2026-10-24; Google geocoding, Old Bus Stand: CGWB published site coordinates."
+  },
+  {
+    "id": "jhanda-hospital-return",
+    "name": "Sadar Hospital \u2192 Jhanda Chowk",
+    "origin": {
+      "lat": 23.9974822,
+      "lng": 85.356311
+    },
+    "dest": {
+      "lat": 23.9917334,
+      "lng": 85.3606259
+    },
+    "area": "Hazaribagh city",
+    "verification": "Endpoint locations checked 2026-10-24; Google geocoding, Old Bus Stand: CGWB published site coordinates."
+  },
+  {
+    "id": "old-bus-korrah-outbound",
+    "name": "Old Bus Stand \u2192 Korrah",
+    "origin": {
+      "lat": 23.9935,
+      "lng": 85.3632
+    },
+    "dest": {
+      "lat": 23.9926221,
+      "lng": 85.3841266
+    },
+    "area": "Hazaribagh city",
+    "verification": "Endpoint locations checked 2026-10-24; Google geocoding, Old Bus Stand: CGWB published site coordinates."
+  },
+  {
+    "id": "old-bus-korrah-return",
+    "name": "Korrah \u2192 Old Bus Stand",
+    "origin": {
+      "lat": 23.9926221,
+      "lng": 85.3841266
+    },
+    "dest": {
+      "lat": 23.9935,
+      "lng": 85.3632
+    },
+    "area": "Hazaribagh city",
+    "verification": "Endpoint locations checked 2026-10-24; Google geocoding, Old Bus Stand: CGWB published site coordinates."
+  },
+  {
+    "id": "korrah-new-bus-outbound",
+    "name": "Korrah \u2192 New Bus Stand",
+    "origin": {
+      "lat": 23.9926221,
+      "lng": 85.3841266
+    },
+    "dest": {
+      "lat": 23.9891061,
+      "lng": 85.363924
+    },
+    "area": "Hazaribagh city",
+    "verification": "Endpoint locations checked 2026-10-24; Google geocoding, Old Bus Stand: CGWB published site coordinates."
+  },
+  {
+    "id": "korrah-new-bus-return",
+    "name": "New Bus Stand \u2192 Korrah",
+    "origin": {
+      "lat": 23.9891061,
+      "lng": 85.363924
+    },
+    "dest": {
+      "lat": 23.9926221,
+      "lng": 85.3841266
+    },
+    "area": "Hazaribagh city",
+    "verification": "Endpoint locations checked 2026-10-24; Google geocoding, Old Bus Stand: CGWB published site coordinates."
+  },
+  {
+    "id": "hospital-pugmil-outbound",
+    "name": "Sadar Hospital \u2192 Pugmil",
+    "origin": {
+      "lat": 23.9974822,
+      "lng": 85.356311
+    },
+    "dest": {
+      "lat": 24.0067967,
+      "lng": 85.3510904
+    },
+    "area": "Hazaribagh city",
+    "verification": "Endpoint locations checked 2026-10-24; Google geocoding, Old Bus Stand: CGWB published site coordinates."
+  },
+  {
+    "id": "hospital-pugmil-return",
+    "name": "Pugmil \u2192 Sadar Hospital",
+    "origin": {
+      "lat": 24.0067967,
+      "lng": 85.3510904
+    },
+    "dest": {
+      "lat": 23.9974822,
+      "lng": 85.356311
+    },
+    "area": "Hazaribagh city",
+    "verification": "Endpoint locations checked 2026-10-24; Google geocoding, Old Bus Stand: CGWB published site coordinates."
+  }
+]

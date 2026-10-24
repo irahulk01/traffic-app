@@ -13,10 +13,10 @@ export default function SearchHeader({ theme, onToggleTheme, alertCount, onOpenA
         </div>
         <div className="brand-title-group">
           <div className="brand-name-row">
-            <span className="brand-name">Traffic Monitoring</span>
-            <span className="brand-badge-pill">LIVE</span>
+            <span className="brand-name">GatiLive</span>
+            <span className="brand-badge-pill">TRAFFIC</span>
           </div>
-          <span className="brand-tagline">Real-Time Traffic Layers & Telemetry</span>
+          <span className="brand-tagline">Hazaribagh road monitoring</span>
         </div>
       </div>
 
