@@ -152,3 +152,27 @@
 @keyframes traffic-count-in{from{opacity:0;transform:translateY(75%)}to{opacity:1;transform:translateY(0)}}
 @keyframes traffic-count-out{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-75%)}}
 @media(prefers-reduced-motion:reduce){.traffic-count-incoming{animation:none!important}.traffic-count-outgoing{display:none}#root .traffic-dashboard-viewport .metric-cell{transition:none!important}}
+.metric-label-compact,.summary-age-compact,.summary-inline-state{display:none}
+.traffic-data-notice summary{cursor:pointer;font-size:12px;line-height:1.5}.traffic-data-notice p{margin-top:8px}
+@media(max-width:899px){
+ #root .traffic-dashboard-viewport .traffic-simple-summary{padding:6px 8px 9px;border-radius:14px}
+ #root .traffic-dashboard-viewport .summary-status-header{display:none!important}
+ #root .traffic-dashboard-viewport .summary-metrics-grid{margin:0;gap:3px}
+ #root .traffic-dashboard-viewport .metric-cell{flex-direction:row;justify-content:center;align-items:center;gap:5px;min-height:44px;padding:5px 2px;border-left:0}
+ #root .traffic-dashboard-viewport .metric-num{font-size:21px;line-height:1.2}
+ #root .traffic-dashboard-viewport .traffic-count-window{min-width:2ch}
+ #root .traffic-dashboard-viewport .metric-label{font-size:12px;white-space:nowrap}
+ #root .traffic-dashboard-viewport .metric-label-full,#root .traffic-dashboard-viewport .summary-age-full{display:none}
+ #root .traffic-dashboard-viewport .metric-label-compact,#root .traffic-dashboard-viewport .summary-age-compact{display:inline}
+ #root .traffic-dashboard-viewport .summary-foot{margin:5px 2px 0;gap:4px;font-size:11px;line-height:1.4;flex-wrap:wrap}
+ #root .traffic-dashboard-viewport .summary-age{gap:3px}
+ #root .traffic-dashboard-viewport .summary-inline-state{display:inline;font-weight:500;color:var(--text-primary)}
+ #root .traffic-dashboard-viewport .workspace-tabs{margin-top:10px;margin-bottom:10px}
+ #root .traffic-dashboard-viewport .workspace-tabs button{min-height:40px}
+ #root .traffic-dashboard-viewport .traffic-data-notice{padding:8px 10px;margin:0 0 10px;border-radius:10px;font-size:12px}
+ #root .traffic-dashboard-viewport .traffic-refresh-status:not(.is-checking){display:none}
+ #root .traffic-dashboard-viewport .telemetry-header{padding-bottom:10px}
+}
+/* Desktop keeps the full labels; compact alternatives are mobile-only. */
+.summary-foot .summary-age-compact,.metric-label .metric-label-compact{display:none}
+@media(max-width:899px){#root .traffic-dashboard-viewport .summary-age-compact,#root .traffic-dashboard-viewport .metric-label-compact{display:inline}}

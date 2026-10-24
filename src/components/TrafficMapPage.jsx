@@ -106,7 +106,7 @@ export default function TrafficMapPage({ city, onBack, apiKey, theme = 'night', 
         {contentView === 'updates' && <>
         {focusedRoute && <button type="button" className="show-all-roads" onClick={() => { setFocusedRoute(null); dispatch(setSelectedStreet(null)); }}>Show updates from all roads</button>}
         {routeOverview && <div className="section-heading affected-heading"><h2>{routeOverview.name}</h2><span>{filtered.length} sections</span></div>}
-        {meta.error && <p className="traffic-data-notice" role="status">{meta.error}</p>}
+        {meta.error && <details className="traffic-data-notice"><summary>{dataState === 'unavailable' ? 'Traffic update unavailable' : 'Update failed · Showing older data'}</summary><p>{meta.error}</p></details>}
         <CorridorCardsFeed key={`${activeFilter}:${focusedRoute || "all"}`} isRefreshing={meta.isFetching} streets={filtered} selectedStreet={selected} onSelectStreet={selectStreet} updatedTime={summary.lastUpdatedTime} dataState={dataState} activeFilter={activeFilter} />
         </>}
       </div>
