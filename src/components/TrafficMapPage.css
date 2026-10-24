@@ -143,3 +143,12 @@
  #root .traffic-dashboard-viewport .road-name{font-size:16px}
  #root .traffic-dashboard-viewport .road-route-line,#root .traffic-dashboard-viewport .road-card-meta{font-size:12px;line-height:1.5}
 }
+/* Summary numbers roll between real observations without counting through fake totals. */
+#root .traffic-dashboard-viewport .metric-cell{transition:background 220ms ease,color 220ms ease,box-shadow 220ms ease,transform 180ms ease}
+.traffic-count-window{display:inline-grid;position:relative;overflow:hidden;min-width:2.4ch;height:1.25em;line-height:1.25;vertical-align:middle;text-align:center;contain:paint}
+.traffic-count-window>span{grid-area:1/1;display:block}
+.traffic-count-incoming{animation:traffic-count-in 300ms cubic-bezier(.2,.8,.2,1) both}
+.traffic-count-outgoing{position:absolute;inset:0;animation:traffic-count-out 240ms cubic-bezier(.4,0,1,1) both;pointer-events:none}
+@keyframes traffic-count-in{from{opacity:0;transform:translateY(75%)}to{opacity:1;transform:translateY(0)}}
+@keyframes traffic-count-out{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-75%)}}
+@media(prefers-reduced-motion:reduce){.traffic-count-incoming{animation:none!important}.traffic-count-outgoing{display:none}#root .traffic-dashboard-viewport .metric-cell{transition:none!important}}
