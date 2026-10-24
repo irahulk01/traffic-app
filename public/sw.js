@@ -1,5 +1,5 @@
 // GatiLive Police Traffic Control - Service Worker
-const CACHE_NAME = 'gatilive-cache-v1';
+const CACHE_NAME = 'gatilive-shell-v2';
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
@@ -25,7 +25,7 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((keys) => {
       return Promise.all(
         keys.map((key) => {
-          if (key !== CACHE_NAME) {
+          if (key.startsWith('gatilive-') && key !== CACHE_NAME) {
             return caches.delete(key);
           }
         })
@@ -41,6 +41,10 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  const url = new URL(event.request.url);
+  // Never replay a cached traffic response as if it were a new observation.
+  if (url.origin !== self.location.origin || url.pathname.startsWith('/api/')) return;
+
   // Skip Google Maps and external API requests from full caching
   if (
     event.request.url.includes('maps.googleapis.com') ||
@@ -52,7 +56,7 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
-        if (networkResponse && networkResponse.status === 200) {
+        if (networkResponse && networkResponse.status === 200 && !networkResponse.headers.get('Cache-Control')?.includes('no-store')) {
           const responseClone = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseClone);
@@ -82,9 +86,9 @@ self.addEventListener('push', (event) => {
     }
   }
 
-  const title = data.title || '🚨 GatiLive 50km Traffic Alert';
+  const title = data.title || 'GatiLive traffic update';
   const options = {
-    body: data.body || 'Heavy congestion detected within your 50km zone.',
+    body: data.body || 'An update is available for a monitored route.',
     icon: '/favicon.svg',
     badge: '/favicon.svg',
     tag: data.tag || 'gatilive-traffic-alert',

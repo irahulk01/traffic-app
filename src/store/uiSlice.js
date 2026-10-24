@@ -27,7 +27,7 @@ export const getSavedLocation = () => {
 
 const getInitialTheme = () => {
   if (typeof window !== 'undefined') {
-    return localStorage.getItem('gatilive_theme') || 'night';
+    return localStorage.getItem('gatilive_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'night' : 'day');
   }
   return 'night';
 };

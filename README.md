@@ -1,16 +1,45 @@
-# React + Vite
+# GatiLive · Hazaribagh traffic
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A responsive traffic monitor with a Google map and an affected-section list. It monitors 15 explicitly configured directional routes around Hazaribagh; it does not claim to cover every road in the district.
 
-Currently, two official plugins are available:
+## Run locally
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+With dependencies installed and the existing `.env` configured:
 
-## React Compiler
+```sh
+npm run dev:all
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+This starts the traffic backend on port 3001 and Vite on its next available port. Open the **Local** address printed by Vite, then choose **Open traffic map**. Alternatively, run `npm run server` and `npm run dev` in separate terminals.
 
-## Expanding the Oxlint configuration
+Required configuration:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+- `VITE_GOOGLE_MAPS_API_KEY`: browser key authorized for the Maps JavaScript API and the app's allowed origins.
+- `GOOGLE_API_KEY`: server key authorized for the Routes API. Keep it server-side.
+
+Vite proxies `/api` to the local backend. Vercel uses `api/traffic.js` for the same traffic router and `vercel.json` for the SPA fallback. Configure both keys for Preview and Production in Vercel; redeploy after changing environment variables. Browser-key origin restrictions must include the deployment domain. The usage meter counts only one function instance and resets on cold starts; Vercel may run multiple instances, so use Google Cloud usage reports for deployment-wide consumption.
+
+## What the interface shows
+
+- Desktop: affected-section sidebar beside the map.
+- Mobile: Explore, Map and Sections views. Selecting a card from the full list opens the matching map section.
+- Heavy/slow filters apply to the highlighted sections. Google's native traffic layer may show additional roads independently.
+- Selection uses the actual decoded provider geometry. A normal gap is never merged into a jam.
+- Distances describe the approximate length of an affected route stretch, not an observed vehicle queue.
+- Source/fetch time, route availability and older/unavailable states stay distinct. Speeds and local delays are not invented.
+- The traffic-watch drawer uses the same heavy sections as the map. It is an in-app view; OS push notifications are not configured by this redesign.
+- Location is requested only when **Show my location** is chosen. It does not expand monitoring coverage.
+
+The backend deduplicates concurrent requests and shares a 60-second cached batch. Requests have timeouts; retained results preserve their original fetch times and become explicitly stale. The collector does not run upstream requests just because the backend is idle. Frontend polling pauses when the document is hidden.
+
+## Checks
+
+```sh
+npm test
+npm run build
+npm run lint
+```
+
+Tests use fixtures, not paid provider requests, and cover polyline decoding, omitted zero indices, normal gaps, separate severity intervals, failed/normal states, stale timestamps and backend request deduplication.
+
+Provider traffic is an estimate that changes over time. Successful API retrieval and UI tests do not establish a measured real-world accuracy percentage.

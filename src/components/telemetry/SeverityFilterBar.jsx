@@ -2,40 +2,14 @@ import React from 'react';
 
 export default function SeverityFilterBar({ activeFilter, onSelectFilter, summary }) {
   if (!summary) return null;
-
-  const normalCount = (summary.lowCount || 0) + (summary.noneCount || 0);
-
-  return (
-    <nav className="filter-segmented-bar" aria-label="Filter roads by traffic level">
-      <button
-        type="button"
-        className={`filter-segment-btn ${activeFilter === 'all' ? 'active' : ''}`}
-        onClick={() => onSelectFilter('all')}
-      >
-        <span>All</span>
-        <span className="segment-count">{summary.totalCount}</span>
-      </button>
-
-      <button
-        type="button"
-        className={`filter-segment-btn filter-heavy ${activeFilter === 'heavy' ? 'active' : ''}`}
-        onClick={() => onSelectFilter('heavy')}
-      >
-        <span className="segment-dot dot-heavy" />
-        <span>High Traffic</span>
-        <span className="segment-count">{summary.heavyCount}</span>
-      </button>
-
-      <button
-        type="button"
-        className={`filter-segment-btn filter-moderate ${activeFilter === 'moderate' ? 'active' : ''}`}
-        onClick={() => onSelectFilter('moderate')}
-      >
-        <span className="segment-dot dot-moderate" />
-        <span>Moderate</span>
-        <span className="segment-count">{summary.moderateCount}</span>
-      </button>
-
-    </nav>
-  );
+  const options = [
+    { id: 'all', label: 'Affected', count: summary.totalCount ?? 0 },
+    { id: 'heavy', label: 'Heavy', count: summary.heavyCount ?? 0 },
+    { id: 'moderate', label: 'Slow', count: summary.moderateCount ?? 0 },
+  ];
+  return <nav className="filter-segmented-bar" aria-label="Filter affected road sections">
+    {options.map((option) => <button key={option.id} type="button" className={`filter-segment-btn ${option.id !== 'all' ? `filter-${option.id}` : ''} ${activeFilter === option.id ? 'active' : ''}`} aria-pressed={activeFilter === option.id} onClick={() => onSelectFilter(option.id)}>
+      {option.id !== 'all' && <span className={`segment-dot dot-${option.id}`} />}<span>{option.label}</span><span className="segment-count">{option.count}</span>
+    </button>)}
+  </nav>;
 }

@@ -7,19 +7,27 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "server": "node server/index.cjs",
+    "test": "node --test src/data/trafficSections.test.js server/routes/traffic.test.cjs",
+    "dev:all": "node scripts/dev.mjs"
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^2.1.1",
     "@reduxjs/toolkit": "^2.12.0",
     "@tanstack/react-query": "^5.103.2",
+    "cors": "^2.8.6",
     "country-state-city": "^3.2.1",
+    "dotenv": "^18.0.4",
+    "express": "^5.2.1",
     "fuse.js": "^7.5.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.47.0",
+    "node-fetch": "^3.3.2",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "react-redux": "^9.3.0"
+    "react-redux": "^9.3.0",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
     "@types/react": "^19.2.18",
