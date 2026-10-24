@@ -116,7 +116,7 @@
 #root .app-root-wrapper{height:var(--app-height,100dvh);min-height:0}
 #root .traffic-dashboard-viewport{height:var(--app-height,100dvh)!important}
 .traffic-sheet-handle{display:none}
-#root .traffic-dashboard-viewport .map-city-tag,#root .traffic-dashboard-viewport .map-control-btn,#root .traffic-dashboard-viewport .mobile-view-switcher{backdrop-filter:none;-webkit-backdrop-filter:none;filter:none;background:var(--bg-surface);color:var(--text-primary)}
+#root .traffic-dashboard-viewport .map-city-tag,#root .traffic-dashboard-viewport .map-control-btn,#root .traffic-dashboard-viewport .mobile-view-switcher{filter:none;background:var(--bg-surface);color:var(--text-primary)}
 #root .traffic-dashboard-viewport .map-tag-area{color:var(--text-primary)}
 #root .traffic-dashboard-viewport .map-tag-source{color:var(--text-secondary)}
 @media(max-width:899px){
